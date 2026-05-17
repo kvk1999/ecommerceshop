@@ -1,0 +1,84 @@
+import { Link, useOutletContext } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import api from "../api/http";
+import ProductCard from "../components/ProductCard";
+import FilterSidebar from "../components/FilterSidebar";
+import Loader from "../components/Loader";
+
+export default function Home() {
+  const { search } = useOutletContext();
+  const [products, setProducts] = useState([]);
+  const [category, setCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get("/products").then((res) => setProducts(res.data)).finally(() => setLoading(false));
+  }, []);
+
+  const filtered = useMemo(() => {
+    const query = search.toLowerCase();
+    return products.filter((product) => {
+      const matchesCategory = category === "All" || product.category === category;
+      const searchable = `${product.title} ${product.description} ${product.category}`.toLowerCase();
+      return matchesCategory && (!query || searchable.includes(query));
+    });
+  }, [category, products, search]);
+
+  const categories = ["All", ...new Set(products.map((product) => product.category))];
+
+  if (loading) return <div className="pt-10"><Loader label="Loading homepage..." /></div>;
+
+  return (
+    <div className="space-y-8 pt-10">
+      <section className="glass-card grid gap-10 p-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
+        <div className="max-w-2xl">
+          <span className="inline-flex items-center rounded-full border border-violet-400/20 bg-violet-400/10 px-4 py-2 text-sm font-medium text-violet-200">
+            Fullstack Ecommerce
+          </span>
+          <h1 className="mt-5 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl xl:text-6xl">
+            Shop Modern Products With
+            <span className="block bg-gradient-to-r from-cyan-300 via-sky-400 to-violet-400 bg-clip-text text-transparent">
+              Elegant Style
+            </span>
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-8 text-slate-300 sm:text-lg">
+            Browse premium products, save favorites, manage your cart, checkout without payments, and track every order through a clean fullstack workflow.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link to="/products" className="rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-glow">
+              Shop Now
+            </Link>
+            <Link to="/orders" className="rounded-full border border-white/15 bg-slate-950/35 px-6 py-3 text-sm font-semibold text-white">
+              View Orders
+            </Link>
+          </div>
+        </div>
+        <div className="glass-card relative h-[280px] overflow-hidden border-white/5 bg-slate-950/30 p-6">
+          <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 via-transparent to-violet-500/15" />
+          <div className="relative flex h-full items-end justify-center">
+            <div className="absolute right-5 top-5 rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3 backdrop-blur-xl">
+              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Special Offer</p>
+              <p className="mt-2 text-xl font-bold">Up to 30% Off</p>
+            </div>
+            <div className="h-28 w-28 rounded-full border-[14px] border-cyan-300/80 shadow-glow" />
+          </div>
+        </div>
+      </section>
+
+      <section className="glass-card p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.35em] text-slate-400">Catalog</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight">Featured Products</h2>
+          </div>
+          <FilterSidebar categories={categories} activeCategory={category} onChange={setCategory} />
+        </div>
+        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {filtered.slice(0, 6).map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
