@@ -25,7 +25,7 @@ export default function Navbar({ search, setSearch }) {
   );
 
   return (
-    <nav className="glass-card sticky top-4 z-30 px-5 py-4">
+    <nav className="glass-card sticky top-4 z-30 px-5 py-4 dark:border-white/10 dark:bg-slate-950/45 light:border-slate-200 light:bg-white/95">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
         
         {/* Logo */}
@@ -36,7 +36,7 @@ export default function Navbar({ search, setSearch }) {
 
           <Link
             to="/"
-            className="text-2xl font-extrabold tracking-tight"
+            className="text-2xl font-extrabold tracking-tight dark:text-white light:text-slate-900"
           >
             Shop
             <span className="bg-gradient-to-r from-cyan-300 to-violet-400 bg-clip-text text-transparent">
@@ -46,15 +46,15 @@ export default function Navbar({ search, setSearch }) {
         </div>
 
         {/* Navigation */}
-        <div className="mx-auto flex w-full max-w-xl items-center justify-center gap-3 rounded-full border border-white/10 bg-slate-950/45 p-1.5 xl:mx-6 xl:flex-1">
+        <div className="mx-auto flex w-full max-w-xl items-center justify-center gap-3 rounded-full border border-white/10 bg-slate-950/45 p-1.5 dark:border-white/10 dark:bg-slate-950/45 light:border-slate-300 light:bg-slate-100/50 xl:mx-6 xl:flex-1">
           
           <NavLink
             to="/"
             className={({ isActive }) =>
               `rounded-full px-5 py-2 text-sm font-medium tracking-[0.08em] transition ${
                 isActive
-                  ? "bg-white text-slate-950"
-                  : "text-slate-300 hover:text-white"
+                  ? "dark:bg-white dark:text-slate-950 light:bg-slate-800 light:text-white"
+                  : "dark:text-slate-300 dark:hover:text-white light:text-slate-700 light:hover:text-slate-900"
               }`
             }
           >
@@ -66,8 +66,8 @@ export default function Navbar({ search, setSearch }) {
             className={({ isActive }) =>
               `rounded-full px-5 py-2 text-sm font-medium tracking-[0.08em] transition ${
                 isActive
-                  ? "bg-white text-slate-950"
-                  : "text-slate-300 hover:text-white"
+                  ? "dark:bg-white dark:text-slate-950 light:bg-slate-800 light:text-white"
+                  : "dark:text-slate-300 dark:hover:text-white light:text-slate-700 light:hover:text-slate-900"
               }`
             }
           >
@@ -79,8 +79,8 @@ export default function Navbar({ search, setSearch }) {
             className={({ isActive }) =>
               `rounded-full px-5 py-2 text-sm font-medium tracking-[0.08em] transition ${
                 isActive
-                  ? "bg-white text-slate-950"
-                  : "text-slate-300 hover:text-white"
+                  ? "dark:bg-white dark:text-slate-950 light:bg-slate-800 light:text-white"
+                  : "dark:text-slate-300 dark:hover:text-white light:text-slate-700 light:hover:text-slate-900"
               }`
             }
           >
@@ -92,8 +92,8 @@ export default function Navbar({ search, setSearch }) {
             className={({ isActive }) =>
               `rounded-full px-5 py-2 text-sm font-medium tracking-[0.08em] transition ${
                 isActive
-                  ? "bg-white text-slate-950"
-                  : "text-slate-300 hover:text-white"
+                  ? "dark:bg-white dark:text-slate-950 light:bg-slate-800 light:text-white"
+                  : "dark:text-slate-300 dark:hover:text-white light:text-slate-700 light:hover:text-slate-900"
               }`
             }
           >
@@ -110,12 +110,12 @@ export default function Navbar({ search, setSearch }) {
           </div>
 
           {/* Icons */}
-          <div className="flex items-center justify-end gap-2 text-slate-300">
+          <div className="flex items-center justify-end gap-2 dark:text-slate-300 light:text-slate-700">
 
             {/* Wishlist */}
             <NavLink
               to="/wishlist"
-              className="relative rounded-full border border-white/10 bg-white/5 p-3 transition hover:border-cyan-400/40"
+              className="relative rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400"
             >
               <Heart className="h-5 w-5" />
 
@@ -129,7 +129,7 @@ export default function Navbar({ search, setSearch }) {
             {/* Cart */}
             <NavLink
               to="/cart"
-              className="relative rounded-full border border-white/10 bg-white/5 p-3 transition hover:border-cyan-400/40"
+              className="relative rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400"
             >
               <ShoppingCart className="h-5 w-5" />
 
@@ -143,7 +143,7 @@ export default function Navbar({ search, setSearch }) {
             {/* Orders */}
             <NavLink
               to="/orders"
-              className="rounded-full border border-white/10 bg-white/5 p-3 transition hover:border-cyan-400/40"
+              className="rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400"
             >
               <ReceiptText className="h-5 w-5" />
             </NavLink>
@@ -151,7 +151,7 @@ export default function Navbar({ search, setSearch }) {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="rounded-full border border-white/10 bg-white/5 p-3 transition hover:border-cyan-400/40"
+              className="rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400"
             >
               {theme === "dark" ? (
                 <Sun className="h-5 w-5" />
@@ -164,14 +164,14 @@ export default function Navbar({ search, setSearch }) {
             {loggedIn ? (
               <button
                 onClick={logout}
-                className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm transition hover:border-cyan-400/40"
+                className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400 light:text-slate-800 light:font-medium"
               >
                 {user?.name?.split(" ")[0] || "Logout"}
               </button>
             ) : (
               <NavLink
                 to="/login"
-                className="rounded-full border border-white/10 bg-white/5 p-3 transition hover:border-cyan-400/40"
+                className="rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400"
               >
                 <UserCircle2 className="h-5 w-5" />
               </NavLink>

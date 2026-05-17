@@ -28,6 +28,7 @@ const orderSchema = new mongoose.Schema(
     ],
     total: { type: Number, required: true },
     status: { type: String, default: "Placed" },
+    cancellationReason: { type: String, default: null },
   },
   { timestamps: true }
 );

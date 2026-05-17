@@ -11,5 +11,9 @@ export default {
     extend: {},
   },
 
-  plugins: [],
+  plugins: [
+    function ({ addVariant }) {
+      addVariant('light', ['.light &', '&.light']);
+    },
+  ],
 };

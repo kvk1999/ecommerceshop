@@ -15,8 +15,8 @@ body,
 }
 
 body {
-  background: white;
-  color: black;
+  background: #f8fafc;
+  color: #1e293b;
   transition:
     background 0.3s ease,
     color 0.3s ease;
@@ -25,4 +25,56 @@ body {
 .dark body {
   background: #020617;
   color: white;
+}
+
+/* Light mode enhancements */
+/* Scope light-mode styles under the .light ancestor to avoid @apply variant use */
+.light .glass-card {
+  @apply border-slate-200 bg-white/90 backdrop-blur-xl;
+}
+
+.dark .glass-card {
+  @apply border-white/10 bg-slate-950/45;
+}
+
+/* Light mode text improvements */
+.light {
+  @apply text-slate-800;
+}
+
+.light p, .light span, .light div {
+  @apply text-slate-700;
+}
+
+.light .text-slate-300 {
+  @apply text-slate-600;
+}
+
+.light .text-slate-400 {
+  @apply text-slate-600;
+}
+
+.light .text-slate-500 {
+  /* removed to avoid circular @apply; use utility classes directly in markup */
+}
+
+/* Light mode button improvements */
+.light button {
+  @apply text-slate-800;
+}
+
+.light .border-white\/10 {
+  @apply border-slate-300;
+}
+
+.light .bg-white\/5 {
+  @apply bg-slate-100;
+}
+
+.light .hover\:text-white:hover {
+  @apply text-slate-900;
+}
+
+.light .text-white {
+  @apply text-slate-900;
 }
