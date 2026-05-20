@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import SearchBar from "./SearchBar";
+import logoSrc from "../assets/ShopSphere-logo.svg";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
@@ -30,18 +31,12 @@ export default function Navbar({ search, setSearch }) {
         
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 text-sm font-black text-slate-950 shadow-glow">
-            SS
-          </div>
-
-          <Link
-            to="/"
-            className="text-2xl font-extrabold tracking-tight dark:text-white light:text-slate-900"
-          >
-            Shop
-            <span className="bg-gradient-to-r from-cyan-300 to-violet-400 bg-clip-text text-transparent">
-              Sphere
-            </span>
+          <Link to="/" className="flex items-center gap-3">
+            <img
+              src={logoSrc}
+              alt="ShopSphere logo"
+              className="h-14 w-[220px] rounded-2xl border border-slate-200 bg-white object-cover shadow-lg"
+            />
           </Link>
         </div>
 

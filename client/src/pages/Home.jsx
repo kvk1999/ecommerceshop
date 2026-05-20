@@ -8,11 +8,15 @@ import Loader from "../components/Loader";
 export default function Home() {
   const { search } = useOutletContext();
   const [products, setProducts] = useState([]);
+  const [icons, setIcons] = useState([]);
   const [category, setCategory] = useState("All");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/products").then((res) => setProducts(res.data)).finally(() => setLoading(false));
+    Promise.all([
+      api.get("/products").then((res) => setProducts(res.data)),
+      api.get("/icons").then((res) => setIcons(res.data.icons || []))
+    ]).finally(() => setLoading(false));
   }, []);
 
   const filtered = useMemo(() => {
