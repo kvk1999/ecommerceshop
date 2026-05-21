@@ -12,7 +12,7 @@ export default function Login() {
       <section className="pt-10">
         <div className="glass-card mx-auto max-w-xl p-10 text-center">
           <h1 className="text-3xl font-bold">You are logged in</h1>
-          <p className="mt-3 text-slate-400">{user?.email}</p>
+          <p className="mt-3 text-slate-600 dark:text-slate-400">{user?.email}</p>
         </div>
       </section>
     );
@@ -28,12 +28,14 @@ export default function Login() {
     <section className="pt-10">
       <div className="glass-card mx-auto max-w-xl p-10">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Login</h1>
-          <Link to="/register" className="text-sm text-cyan-300">
+          <h1 className="text-3xl font-bold text-slate-950 dark:text-white">Login</h1>
+          <Link to="/register" className="text-sm text-cyan-700 dark:text-cyan-300">
             Need an account?
           </Link>
         </div>
-        <p className="mt-3 text-slate-400">Use the new JWT-based authentication flow to access wishlist, cart, checkout, and orders.</p>
+        <p className="mt-3 text-slate-600 dark:text-slate-400">
+          Use the new JWT-based authentication flow to access wishlist, cart, checkout, and orders.
+        </p>
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <input
             value={form.email}
@@ -51,7 +53,10 @@ export default function Login() {
             placeholder="Password"
             className="w-full rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-cyan-400/40 focus:outline-none"
           />
-          <button type="submit" className="w-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-semibold text-slate-950 shadow-glow">
+          <button
+            type="submit"
+            className="w-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-semibold text-slate-950 shadow-glow"
+          >
             Login
           </button>
         </form>
@@ -59,3 +64,4 @@ export default function Login() {
     </section>
   );
 }
+
