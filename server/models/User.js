@@ -1,10 +1,30 @@
 import mongoose from "mongoose";
 
+const addressSchema = new mongoose.Schema(
+  {
+    label: { type: String, default: "Home" },
+    fullName: { type: String },
+    line1: { type: String, required: true },
+    line2: { type: String, default: "" },
+    city: { type: String, required: true },
+    postalCode: { type: String, required: true },
+    country: { type: String, default: "IN" },
+    phone: { type: String, default: "" },
+    isDefault: { type: Boolean, default: false },
+  },
+  { _id: true }
+);
+
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
+    // Profile
+    name: { type: String, required: true }, // username
+    fullName: { type: String, default: "" },
     email: { type: String, required: true, unique: true, lowercase: true },
+    profileImageUrl: { type: String, default: "" },
     password: { type: String, required: true },
+
+    // Social/data
     wishlist: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -21,6 +41,16 @@ const userSchema = new mongoose.Schema(
         quantity: { type: Number, default: 1 },
       },
     ],
+
+    // Addresses
+    addresses: [addressSchema],
+
+    role: {
+      type: String,
+      enum: ["customer", "admin"],
+      default: "customer",
+      index: true,
+    },
   },
   { timestamps: true }
 );

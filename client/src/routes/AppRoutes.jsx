@@ -9,6 +9,7 @@ import Checkout from "../pages/Checkout";
 import Orders from "../pages/Orders";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import MyAccount from "../pages/MyAccount";
 
 export default function AppRoutes() {
   return (
@@ -21,6 +22,7 @@ export default function AppRoutes() {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/account" element={<MyAccount />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Route>

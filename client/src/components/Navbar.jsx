@@ -133,18 +133,60 @@ export default function Navbar({ search, setSearch }) {
               )}
             </button>
 
-            {/* Login / Logout */}
+            {/* Login / Dropdown */}
             {loggedIn ? (
-              <button
-                onClick={logout}
-                className="rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400 light:text-slate-800 light:font-medium"
-              >
-                {user?.name?.split(" ")[0] || "Logout"}
-              </button>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById("shopsphere-user-dropdown");
+                    el?.classList.toggle("hidden");
+                  }}
+                  className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-cyan-400 light:text-slate-800 light:font-medium"
+                  aria-haspopup="menu"
+                  aria-label="User menu"
+                >
+                  {user?.name?.split(" ")[0] || "Account"}
+                  <UserCircle2 className="h-5 w-5" />
+                </button>
+
+                <div
+                  id="shopsphere-user-dropdown"
+                  className="hidden absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-2xl"
+                  role="menu"
+                >
+                  <div className="px-4 py-3">
+                    <div className="text-sm font-semibold text-white">{user?.fullName || user?.name}</div>
+                    <div className="text-xs text-slate-300">{user?.email}</div>
+                  </div>
+                  <div className="border-t border-white/10" />
+
+                  <NavLink to="/account" role="menuitem" className="block px-4 py-3 text-sm text-slate-200 hover:bg-white/10">
+                    My Account
+                  </NavLink>
+                  <NavLink to="/orders" role="menuitem" className="block px-4 py-3 text-sm text-slate-200 hover:bg-white/10">
+                    Orders
+                  </NavLink>
+                  <NavLink to="/wishlist" role="menuitem" className="block px-4 py-3 text-sm text-slate-200 hover:bg-white/10">
+                    Wishlist
+                  </NavLink>
+
+                  <div className="border-t border-white/10" />
+
+                  <button
+                    type="button"
+                    onClick={logout}
+                    role="menuitem"
+                    className="block w-full px-4 py-3 text-left text-sm text-rose-200 hover:bg-white/10"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
             ) : (
               <NavLink
                 to="/login"
-                className="rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400"
+                className="rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-cyan-400"
               >
                 <UserCircle2 className="h-5 w-5" />
               </NavLink>

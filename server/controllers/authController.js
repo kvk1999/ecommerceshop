@@ -6,9 +6,14 @@ function userPayload(user) {
   return {
     id: user._id,
     name: user.name,
+    fullName: user.fullName,
     email: user.email,
+    role: user.role,
+    profileImageUrl: user.profileImageUrl,
   };
 }
+
+
 
 export async function register(req, res) {
   const { name, email, password } = req.body;
