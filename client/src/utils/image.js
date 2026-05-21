@@ -1,0 +1,75 @@
+// Import all category icons from assets
+import iconBagsWallets from "../assets/icon-bags-wallets.svg";
+import iconElectronics from "../assets/icon-electronics.svg";
+import iconFootwear from "../assets/icon-footwear.svg";
+import iconHeadphones from "../assets/icon-headphones.svg";
+import iconPerfumes from "../assets/icon-perfumes.svg";
+import iconSmartWatches from "../assets/icon-smartwatches.svg";
+
+// Map icon names to imported assets
+const ICON_MAP = {
+  "icon-bags-wallets.svg": iconBagsWallets,
+  "icon-electronics.svg": iconElectronics,
+  "icon-footwear.svg": iconFootwear,
+  "icon-headphones.svg": iconHeadphones,
+  "icon-perfumes.svg": iconPerfumes,
+  "icon-smartwatches.svg": iconSmartWatches,
+  // Alias names for server responses and shorter variants
+  "bags-wallets": iconBagsWallets,
+  "electronics": iconElectronics,
+  "electronic": iconElectronics,
+  "phone": iconElectronics,
+  "mobile": iconElectronics,
+  "smartphone": iconElectronics,
+  "device": iconElectronics,
+  "footwear": iconFootwear,
+  "headphones": iconHeadphones,
+  "perfumes": iconPerfumes,
+  "smartwatches": iconSmartWatches,
+  "watch": iconSmartWatches,
+  "smartwatch": iconSmartWatches,
+  "bag": iconBagsWallets,
+  "bags": iconBagsWallets,
+  "wallet": iconBagsWallets,
+  "wallets": iconBagsWallets,
+  "smart-watch": iconSmartWatches,
+  "smart watch": iconSmartWatches,
+  "perfume": iconPerfumes,
+  "shoe": iconFootwear,
+  "shoes": iconFootwear,
+  "earbuds": iconHeadphones,
+  "speaker": iconElectronics,
+};
+
+export function normalizePublicPath(p) {
+  if (!p) return p;
+  // Remove any leading /public/ or public/ so paths reference asset filenames (e.g. icon-headphones.svg)
+  return p.replace(/^\/?public\//, "").replace(/^.*\//, "");
+}
+
+export function getImageCandidates(p) {
+  if (!p) return [];
+  
+  const normalized = normalizePublicPath(p).toLowerCase();
+  const candidates = [];
+  
+  const assetMatch = ICON_MAP[normalized] || ICON_MAP[normalized.replace(/\.svg$/, "")];
+  if (assetMatch) {
+    candidates.push(assetMatch);
+  }
+  
+  // Fallback to server-served assets using the normalized key
+  if (normalized.startsWith("/")) {
+    candidates.push(normalized);
+  } else {
+    candidates.push(`/assets/${normalized}`);
+    candidates.push(`/${normalized}`);
+
+    if (!normalized.endsWith(".svg")) {
+      candidates.push(`/assets/${normalized}.svg`);
+      candidates.push(`/${normalized}.svg`);
+    }
+  }
+  
+  return candidates;
+}

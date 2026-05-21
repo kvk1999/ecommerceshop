@@ -4,7 +4,7 @@
     "title": "Nebula X Headphones",
     "description": "Spatial audio headphones with metallic neon finish and adaptive noise isolation.",
     "price": 249,
-    "image": "headphones",
+    "images": ["icon-headphones.svg", "icon-headphones.svg"],
     "category": "Headphones",
     "stock": 18
   },
@@ -13,7 +13,7 @@
     "title": "Titan Edge Phone",
     "description": "Dark titanium flagship phone with cinematic display and pro camera array.",
     "price": 899,
-    "image": "phone",
+    "images": ["icon-electronics.svg", "icon-electronics.svg"],
     "category": "Electronics",
     "stock": 11
   },
@@ -22,53 +22,99 @@
     "title": "Pulse Time Watch",
     "description": "Aero-grade smartwatch with AMOLED face, 10-day battery, and wellness suite.",
     "price": 329,
-    "image": "watch",
+    "images": ["icon-smartwatches.svg", "icon-smartwatches.svg"],
     "category": "Smart Watches",
     "stock": 9
   },
   {
     "id": "p4",
+    "title": "Luna Smartwatch",
+    "description": "Elegant smartwatch with customizable watch faces and health monitoring.",
+    "price": 279,
+    "images": ["icon-smartwatches.svg", "icon-smartwatches.svg"],
+    "category": "Smart Watches",
+    "stock": 12
+  },
+  {
+    "id": "p5",
     "title": "Aether Carry Bag",
     "description": "Structured premium commuter bag with water-resistant panels and smart pockets.",
     "price": 189,
-    "image": "bag",
+    "images": ["icon-bags-wallets.svg", "icon-bags-wallets.svg"],
     "category": "Bags and Wallets",
     "stock": 14
   },
   {
-    "id": "p5",
+    "id": "p6",
     "title": "Velocity Sneakers",
     "description": "Lightweight performance sneakers with sculpted sole and futuristic upper.",
     "price": 159,
-    "image": "shoe",
+    "images": ["icon-footwear.svg", "icon-footwear.svg"],
     "category": "Footwear",
     "stock": 23
   },
   {
-    "id": "p6",
+    "id": "p7",
     "title": "Noir Essence",
     "description": "Bold evening fragrance with amber, saffron, cedar, and smoky musk.",
     "price": 129,
-    "image": "perfume",
+    "images": ["icon-perfumes.svg", "icon-perfumes.svg"],
     "category": "Perfumes",
     "stock": 16
   },
   {
-    "id": "p7",
+    "id": "p8",
     "title": "Orbit Speaker",
     "description": "360-degree wireless speaker with immersive bass and ambient light halo.",
     "price": 219,
-    "image": "speaker",
+    "images": ["icon-electronics.svg", "icon-electronics.svg"],
     "category": "Electronics",
     "stock": 20
   },
   {
-    "id": "p8",
+    "id": "p9",
     "title": "Arc Wallet",
     "description": "Slim RFID wallet crafted with soft-touch finish and magnetic closure.",
     "price": 89,
-    "image": "wallet",
+    "images": ["icon-bags-wallets.svg", "icon-bags-wallets.svg"],
     "category": "Bags and Wallets",
     "stock": 28
+  },
+  {
+    "id": "p10",
+    "title": "Stratus Earbuds",
+    "description": "True wireless earbuds with active noise cancellation and touch controls.",
+    "price": 149,
+    "images": ["icon-headphones.svg", "icon-headphones.svg"],
+    "category": "Headphones",
+    "stock": 25
+  },
+  {
+    "id": "p11",
+    "title": "Vortex Gaming Mouse",
+    "description": "Ergonomic gaming mouse with customizable RGB lighting and high-precision sensor.",
+    "price": 79,
+    "images": ["icon-electronics.svg", "icon-electronics.svg"],
+    "category": "Electronics",
+    "stock": 30
+  },
+  {
+    "id": "p12",
+    "title": "NOVA Perfume",
+    "description": "A luxurious fragrance with notes of jasmine, sandalwood, and vanilla.",
+    "price": 99,
+    "images": ["icon-perfumes.svg", "icon-perfumes.svg"],
+    "category": "Perfumes",
+    "stock": 22
+  },
+  {
+    "id": "p13",
+    "title": "Portex Backpack",
+    "description": "Sleek backpack with multiple compartments and water-resistant material.",
+    "price": 129,
+    "images": ["icon-bags-wallets.svg", "icon-bags-wallets.svg"],
+    "category": "Bags and Wallets",
+    "stock": 19
   }
+  
 ]

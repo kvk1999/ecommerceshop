@@ -1,21 +1,17 @@
 import {
-  Heart,
   MoonStar,
   Sun,
   ShoppingCart,
-  ReceiptText,
   UserCircle2,
 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import logoSrc from "../assets/ShopSphere-logo.svg";
-import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar({ search, setSearch }) {
-  const { wishlistIds } = useWishlist();
   const { cartItems } = useCart();
   const { toggleTheme, theme } = useTheme();
   const { user, loggedIn, logout } = useAuth();
@@ -26,18 +22,22 @@ export default function Navbar({ search, setSearch }) {
   );
 
   return (
-    <nav className="glass-card sticky top-4 z-30 px-5 py-4 dark:border-white/10 dark:bg-slate-950/45 light:border-slate-200 light:bg-white/95">
+    <nav className="glass-card sticky top-4 z-30 border border-white/10 bg-white/80 px-5 py-5 shadow-2xl shadow-slate-900/10 backdrop-blur-xl transition dark:border-white/10 dark:bg-slate-950/80 light:border-slate-200/40 light:bg-white/95">
       <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
         
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <Link to="/" className="flex items-center gap-3">
             <img
               src={logoSrc}
               alt="ShopSphere logo"
-              className="h-14 w-[220px] rounded-2xl border border-slate-200 bg-white object-cover shadow-lg"
+              className="h-14 w-auto rounded-2xl border border-slate-200/30 bg-white px-3 py-2 shadow-lg dark:border-white/10 dark:bg-slate-950/70"
             />
           </Link>
+          <div className="hidden flex-col text-sm text-slate-600 dark:text-slate-400 md:flex">
+            <span className="font-semibold text-slate-900 dark:text-white">ShopSphere</span>
+            <span>Premium storefront</span>
+          </div>
         </div>
 
         {/* Navigation */}
@@ -107,20 +107,6 @@ export default function Navbar({ search, setSearch }) {
           {/* Icons */}
           <div className="flex items-center justify-end gap-2 dark:text-slate-300 light:text-slate-700">
 
-            {/* Wishlist */}
-            <NavLink
-              to="/wishlist"
-              className="relative rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400"
-            >
-              <Heart className="h-5 w-5" />
-
-              {wishlistIds.length ? (
-                <span className="absolute -right-1.5 -top-1.5 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white shadow-[0_0_18px_rgba(244,63,94,0.7)]">
-                  {wishlistIds.length}
-                </span>
-              ) : null}
-            </NavLink>
-
             {/* Cart */}
             <NavLink
               to="/cart"
@@ -135,18 +121,10 @@ export default function Navbar({ search, setSearch }) {
               ) : null}
             </NavLink>
 
-            {/* Orders */}
-            <NavLink
-              to="/orders"
-              className="rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400"
-            >
-              <ReceiptText className="h-5 w-5" />
-            </NavLink>
-
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="rounded-full border border-white/10 bg-white/5 p-3 transition dark:border-white/10 dark:bg-white/5 dark:hover:border-cyan-400/40 light:border-slate-300 light:bg-slate-200/50 light:hover:border-slate-400"
+              className="rounded-full border border-white/10 bg-white/10 p-3 text-slate-800 transition duration-300 hover:bg-white/20 dark:border-white/10 dark:bg-slate-950/40 dark:text-slate-200"
             >
               {theme === "dark" ? (
                 <Sun className="h-5 w-5" />

@@ -75,49 +75,73 @@ export default function Checkout() {
   if (!detailed.length) {
     return (
       <section className="pt-10">
-        <div className="glass-card p-10 text-center">
-          <p className="text-lg font-semibold">Checkout is waiting for products.</p>
-          <p className="mt-2 text-slate-400">Add something to the cart before placing an order.</p>
+        <div className="glass-card p-10 text-center shadow-xl shadow-slate-900/10">
+          <p className="text-lg font-semibold text-slate-950 dark:text-white">Checkout is waiting for products.</p>
+          <p className="mt-2 text-slate-500 dark:text-slate-400">Add something to the cart before placing an order.</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="grid gap-6 pt-10 lg:grid-cols-[minmax(0,1fr)_340px]">
-      <form onSubmit={handleSubmit} className="glass-card space-y-4 p-6">
-        <h1 className="text-3xl font-bold">Checkout</h1>
-        <p className="text-slate-400">No payment gateway required for this blueprint implementation.</p>
-        {["fullName", "email", "address", "city", "postalCode"].map((field) => (
-          <input
-            key={field}
-            required
-            value={form[field]}
-            onChange={(event) => setForm((prev) => ({ ...prev, [field]: event.target.value }))}
-            placeholder={field.replace(/([A-Z])/g, " $1").replace(/^./, (char) => char.toUpperCase())}
-            className="w-full rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-cyan-400/40 focus:outline-none"
-          />
+    <section className="grid gap-6 pt-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <form onSubmit={handleSubmit} className="glass-card space-y-6 p-8 shadow-xl shadow-slate-900/10">
+        <div className="space-y-2">
+          <p className="text-sm uppercase tracking-[0.32em] text-slate-500 dark:text-slate-400">Checkout</p>
+          <h1 className="text-3xl font-bold text-slate-950 dark:text-white">Complete your order</h1>
+          <p className="text-sm text-slate-600 dark:text-slate-400">No payment gateway required — simply confirm your shipping details to place the order.</p>
+        </div>
+
+        {[
+          { name: "fullName", label: "Full Name" },
+          { name: "email", label: "Email" },
+          { name: "address", label: "Shipping Address" },
+          { name: "city", label: "City" },
+          { name: "postalCode", label: "Postal Code" },
+        ].map((field) => (
+          <label key={field.name} className="block text-sm text-slate-700 dark:text-slate-300">
+            <span className="mb-2 inline-block font-medium">{field.label}</span>
+            <input
+              required
+              value={form[field.name]}
+              onChange={(event) => setForm((prev) => ({ ...prev, [field.name]: event.target.value }))}
+              placeholder={field.label}
+              className="w-full rounded-3xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-white outline-none transition duration-200 focus:border-cyan-400/40 focus:ring-4 focus:ring-cyan-400/10 dark:border-white/10 dark:bg-slate-900/60"
+            />
+          </label>
         ))}
-        <button type="submit" className="w-full rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-sm font-semibold text-slate-950 shadow-glow">
+
+        <button type="submit" className="btn-primary w-full justify-center">
           Place Order
         </button>
       </form>
 
-      <aside className="glass-card h-fit p-6">
-        <p className="text-lg font-semibold">Order Summary</p>
-        <div className="mt-4 space-y-3 text-sm text-slate-300">
-          {detailed.map((item) => (
-            <div key={item.id} className="flex items-center justify-between">
-              <span>
-                {item.title} x {item.quantity}
-              </span>
-              <span>{currency(item.lineTotal)}</span>
+      <aside className="glass-card h-fit p-6 shadow-xl shadow-slate-900/10">
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm uppercase tracking-[0.32em] text-slate-500 dark:text-slate-400">Order Summary</p>
+            <h2 className="mt-2 text-2xl font-bold text-slate-950 dark:text-white">Your items</h2>
+          </div>
+
+          <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+            {detailed.map((item) => (
+              <div key={item.id} className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/10 px-4 py-3">
+                <span>{item.title} x {item.quantity}</span>
+                <span>{currency(item.lineTotal)}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-slate-950/30 p-4 text-sm text-slate-400 dark:border-white/10">
+            <div className="flex items-center justify-between">
+              <span>Subtotal</span>
+              <span className="font-semibold text-slate-950 dark:text-white">{currency(total)}</span>
             </div>
-          ))}
-        </div>
-        <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4 font-semibold">
-          <span>Total</span>
-          <span>{currency(total)}</span>
+            <div className="mt-3 flex items-center justify-between">
+              <span>Shipping</span>
+              <span className="font-semibold text-slate-950 dark:text-white">Free</span>
+            </div>
+          </div>
         </div>
       </aside>
     </section>

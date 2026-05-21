@@ -33,47 +33,89 @@ export default function Home() {
   if (loading) return <div className="pt-10"><Loader label="Loading homepage..." /></div>;
 
   return (
-    <div className="space-y-8 pt-10">
-      <section className="glass-card grid gap-10 p-8 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center dark:border-white/10 dark:bg-slate-950/45 light:border-slate-200 light:bg-white/95">
-        <div className="max-w-2xl">
-          <span className="inline-flex items-center rounded-full border border-violet-400/20 bg-violet-400/10 px-4 py-2 text-sm font-medium dark:text-violet-200 light:text-violet-700 light:bg-violet-100/50 light:border-violet-300/50">
-            Fullstack Ecommerce
+    <div className="space-y-10 pt-10">
+      <section className="glass-card grid gap-10 p-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-center">
+        <div className="space-y-8">
+          <span className="badge-pill border-cyan-400/20 bg-cyan-400/10 text-cyan-700 dark:border-cyan-400/30 dark:bg-cyan-500/10 dark:text-cyan-200">
+            Fullstack Commerce
           </span>
-          <h1 className="mt-5 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl xl:text-6xl dark:text-white light:text-slate-900">
-            Shop Modern Products With
-            <span className="block bg-gradient-to-r from-cyan-300 via-sky-400 to-violet-400 bg-clip-text text-transparent">
-              Elegant Style
-            </span>
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-8 dark:text-slate-300 sm:text-lg light:text-slate-700">
-            Browse premium products, save favorites, manage your cart, checkout without payments, and track every order through a clean fullstack workflow.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/products" className="rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-glow">
+          <div className="space-y-4 max-w-2xl">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl xl:text-6xl dark:text-white light:text-slate-950">
+              Discover premium products with a <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-500 bg-clip-text text-transparent">modern luxury experience</span>
+            </h1>
+            <p className="text-base leading-8 text-slate-600 dark:text-slate-300 sm:text-lg">
+              Browse stunning product cards, save favourites, manage your cart, and enjoy consistent light/dark theme styling across every page of ShopSphere.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link to="/products" className="btn-primary">
               Shop Now
             </Link>
-            <Link to="/orders" className="rounded-full border dark:border-white/15 dark:bg-slate-950/35 dark:text-white light:border-slate-300 light:bg-slate-200/50 light:text-slate-800 px-6 py-3 text-sm font-semibold">
+            <Link to="/orders" className="btn-secondary">
               View Orders
             </Link>
           </div>
         </div>
-        <div className="glass-card relative h-[280px] overflow-hidden dark:border-white/5 dark:bg-slate-950/30 light:border-slate-200/50 light:bg-slate-100/50 p-6">
-          <div className="absolute inset-0 dark:bg-gradient-to-br dark:from-cyan-400/10 dark:via-transparent dark:to-violet-500/15 light:from-cyan-400/5 light:via-transparent light:to-violet-500/5" />
-          <div className="relative flex h-full items-end justify-center">
-            <div className="absolute right-5 top-5 rounded-2xl dark:border-white/10 dark:bg-slate-950/60 light:border-slate-300 light:bg-slate-200/70 px-4 py-3 backdrop-blur-xl">
-              <p className="text-xs uppercase tracking-[0.28em] dark:text-slate-400 light:text-slate-600">Special Offer</p>
-              <p className="mt-2 text-xl font-bold dark:text-white light:text-slate-900">Up to 30% Off</p>
+
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/10 p-6 shadow-inner shadow-slate-900/5 dark:border-white/10 dark:bg-slate-950/30">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.25),_transparent_18%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.18),_transparent_18%)]" />
+          <div className="relative flex h-full flex-col justify-between gap-6">
+            <div className="space-y-3">
+              <span className="badge-pill bg-white/10 text-slate-900 dark:bg-slate-950/80 dark:text-white">Hot Launch</span>
+              <h2 className="text-3xl font-bold text-slate-950 dark:text-white">Premium release curated for you.</h2>
             </div>
-            <div className="h-28 w-28 rounded-full border-[14px] border-cyan-300/80 shadow-glow" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-[1.75rem] border border-white/10 bg-white/10 p-5 text-center backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60">
+                <p className="text-sm uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Fast delivery</p>
+                <p className="mt-3 text-xl font-semibold text-slate-950 dark:text-white">2-3 days</p>
+              </div>
+              <div className="rounded-[1.75rem] border border-white/10 bg-white/10 p-5 text-center backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60">
+                <p className="text-sm uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">Best offers</p>
+                <p className="mt-3 text-xl font-semibold text-slate-950 dark:text-white">Exclusive perks</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="glass-card p-6 dark:border-white/10 dark:bg-slate-950/45 light:border-slate-200 light:bg-white/95">
+      {icons.length > 0 && (
+        <section className="glass-card p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-sm uppercase tracking-[0.32em] text-slate-500 dark:text-slate-400">Popular categories</p>
+              <h2 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Discover shop categories</h2>
+            </div>
+          </div>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {icons.slice(0, 6).map((icon) => {
+              const src = icon.src || icon.url || icon.asset || "";
+              const key = icon.id || icon.filename || icon.url || icon.name || src;
+              const label = icon.name || icon.label || icon.filename?.replace(/^icon-/, "") || "Category";
+
+              return (
+                <Link
+                  key={key}
+                  to="/products"
+                  className="group rounded-[1.8rem] border border-white/10 bg-white/80 p-5 text-center transition duration-300 hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-cyan-50 dark:border-white/10 dark:bg-slate-950/60 dark:hover:border-cyan-500/40 dark:hover:bg-slate-900/70"
+                >
+                  {src ? (
+                    <img src={src} alt={label} className="mx-auto h-16 w-16 object-contain" />
+                  ) : (
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-700 dark:bg-slate-800">{label.charAt(0)}</div>
+                  )}
+                  <p className="mt-4 text-sm font-semibold text-slate-950 dark:text-white">{label}</p>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      <section className="glass-card p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.35em] dark:text-slate-400 light:text-slate-600">Catalog</p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight dark:text-white light:text-slate-900">Featured Products</h2>
+            <p className="text-sm uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">Catalog</p>
+            <h2 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">Featured Products</h2>
           </div>
           <FilterSidebar categories={categories} activeCategory={category} onChange={setCategory} />
         </div>

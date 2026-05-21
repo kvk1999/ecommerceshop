@@ -28,12 +28,13 @@ export default function Products() {
   if (loading) return <div className="pt-10"><Loader label="Loading products..." /></div>;
 
   return (
-    <section className="space-y-6 pt-10">
-      <div className="glass-card p-6">
+    <section className="space-y-8 pt-10">
+      <div className="glass-card p-6 shadow-xl shadow-slate-900/10">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.35em] text-slate-400">Shop</p>
-            <h1 className="mt-2 text-3xl font-bold">All Products</h1>
+            <p className="text-sm uppercase tracking-[0.35em] text-slate-500 dark:text-slate-400">Shop</p>
+            <h1 className="mt-2 text-3xl font-bold text-slate-950 dark:text-white">All Products</h1>
+            <p className="mt-2 max-w-xl text-sm text-slate-600 dark:text-slate-400">Browse the full ShopSphere catalog with refined filters, responsive cards, and premium layout.</p>
           </div>
           <FilterSidebar categories={categories} activeCategory={category} onChange={setCategory} />
         </div>
