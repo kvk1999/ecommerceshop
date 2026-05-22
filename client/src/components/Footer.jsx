@@ -35,8 +35,7 @@ export default function Footer() {
           </h2>
 
           <p className="max-w-sm leading-7 text-slate-700 dark:text-slate-400">
-            A polished storefront with consistent light and dark theming,
-            smooth interactions, and thoughtful spacing across every page.
+            Browse premium products, save your favourites, and manage your cart with ease using ShopSphere’s modern ecommerce experience.
           </p>
         </div>
 

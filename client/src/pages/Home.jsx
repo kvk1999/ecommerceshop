@@ -41,7 +41,7 @@ export default function Home() {
           </span>
           <div className="space-y-4 max-w-2xl">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl xl:text-6xl dark:text-white light:text-slate-950">
-              Discover premium products with a <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-500 bg-clip-text text-transparent">modern luxury experience</span>
+              Designed for modern shoppers <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-500 bg-clip-text text-transparent">who value simplicity, style and convenience</span>
             </h1>
             <p className="text-base leading-8 text-slate-600 dark:text-slate-300 sm:text-lg">
               Find trending products, organize your favourites, manage orders with ease, and enjoy a futuristic shopping experience across every device.
