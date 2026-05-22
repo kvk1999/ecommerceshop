@@ -64,8 +64,8 @@ const products = [
     stock: 23,
   },
   {
-    title: "Noir Essence",
-    description: "Bold evening fragrance with amber, saffron, cedar, and smoky musk.",
+    title: "Losa Perfume for men (Woody)",
+    description: "A bold masculine fragrance with notes of cedar, sandalwood, and smoky musk.",
     price: 129,
     image: "icon-perfumes.svg",
     images: ["icon-perfumes.svg"],
@@ -114,8 +114,8 @@ const products = [
     stock: 30,
   },
   {
-    title: "NOVA Perfume",
-    description: "Fresh unisex fragrance with notes of bergamot, jasmine, and musk.",
+    title: "NOVA Perfume for women (Floral)",
+    description: "A vibrant floral fragrance with notes of jasmine, peony, and fresh citrus.",
     price: 99,
     image: "icon-perfumes.svg",
     images: ["icon-perfumes.svg"],
@@ -132,8 +132,59 @@ const products = [
     code: "Ba",
     category: "Bags and Wallets",
     stock: 17,
+  },
+    {
+      title: "BellaVita Perfume for Men (Musk)",
+      description: "A romantic fragrance with notes of rose, vanilla, and musk.",
+      price: 109,
+      image: "icon-perfumes.svg",
+      images: ["icon-perfumes.svg"],
+      code: "Pe",
+      category: "Perfumes",
+      stock: 18,
+    },
+    {
+      title: "Unity Running Shoes",
+      description: "Comfortable running shoes with breathable mesh and responsive cushioning.",
+      price: 139,
+      image: "icon-footwear.svg",
+      images: ["icon-footwear.svg"],
+      code: "Fo",
+      category: "Footwear",
+      stock: 26,
+    },
+  {
+    title: "Echo Smart Speaker",
+    description: "Voice-controlled smart speaker with immersive sound and seamless integration.",
+    price: 129,
+    image: "icon-electronics.svg",
+    images: ["icon-electronics.svg"],
+    code: "El",
+    category: "Electronics",
+    stock: 24,
+  },
+  {
+    title: "Opera Watch",
+    description: "Luxury watch with sapphire crystal face, leather strap, and intricate dial design.",
+    price: 499,
+    image: "icon-smartwatches.svg",
+    images: ["icon-smartwatches.svg"],
+    code: "Sw",
+    category: "Smart Watches",
+    stock: 7,
+  },
+  {
+    title: "Sonic Car Charger",
+    description: "Fast car charger with dual USB ports and compact design for on-the-go charging.",
+    price: 39,
+    image: "icon-electronics.svg",
+    images: ["icon-electronics.svg"],
+    code: "El",
+    category: "Electronics",
+    stock: 40,
   }
 ];
+
 
 export async function seedProductsIfEmpty() {
   const existingTitles = new Set((await Product.find({}, "title")).map((product) => product.title));

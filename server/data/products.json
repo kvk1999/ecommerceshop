@@ -55,8 +55,8 @@
   },
   {
     "id": "p7",
-    "title": "Noir Essence",
-    "description": "Bold evening fragrance with amber, saffron, cedar, and smoky musk.",
+    "title": "Losa Perfume for men (Woody)",
+    "description": "A bold masculine fragrance with notes of cedar, sandalwood, and smoky musk.",
     "price": 129,
     "images": ["icon-perfumes.svg", "icon-perfumes.svg"],
     "category": "Perfumes",
@@ -100,8 +100,8 @@
   },
   {
     "id": "p12",
-    "title": "NOVA Perfume",
-    "description": "A luxurious fragrance with notes of jasmine, sandalwood, and vanilla.",
+    "title": "NOVA Perfume for women (Floral)",
+    "description": "A vibrant floral fragrance with notes of jasmine, peony, and fresh citrus.",
     "price": 99,
     "images": ["icon-perfumes.svg", "icon-perfumes.svg"],
     "category": "Perfumes",
@@ -115,6 +115,50 @@
     "images": ["icon-bags-wallets.svg", "icon-bags-wallets.svg"],
     "category": "Bags and Wallets",
     "stock": 19
+  },
+  {
+    "id": "p14",
+    "title": "Unity Running Shoes",
+    "description": "Comfortable running shoes with breathable mesh and responsive cushioning.",
+    "price": 139,
+    "images": ["icon-footwear.svg", "icon-footwear.svg"],
+    "category": "Footwear",
+    "stock": 26
+  },
+  {
+    "id": "p15",
+    "title": "Opera Watch",
+    "description": "Smartwatch with GPS, heart rate monitoring, and customizable notifications.",
+    "price": 149,
+    "images": ["icon-watches.svg", "icon-watches.svg"],
+    "category": "Watches",
+    "stock": 17
+  },
+  {
+    "id": "p16",
+    "title": "Sonic Car Charger",
+    "description": "Fast wireless car charger with sleek design and secure grip.",
+    "price": 39,
+    "images": ["icon-electronics.svg", "icon-electronics.svg"],
+    "category": "Electronics",
+    "stock": 35
+  },
+  {
+    "id": "p17",
+    "title": "BellaVita Perfume for Men (Musk)",
+    "description": "A romantic fragrance with notes of rose, vanilla, and musk.",
+    "price": 109,
+    "images": ["icon-perfumes.svg", "icon-perfumes.svg"],
+    "category": "Perfumes",
+    "stock": 18
+  },
+  {
+    "id": "p18",
+    "title": "Echo Smart Speaker",
+    "description": "Voice-controlled smart speaker with rich sound and smart home integration.",
+    "price": 129,
+    "images": ["icon-electronics.svg", "icon-electronics.svg"],
+    "category": "Electronics",
+    "stock": 24
   }
-  
 ]
