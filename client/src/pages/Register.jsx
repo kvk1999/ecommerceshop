@@ -42,7 +42,7 @@ export default function Register() {
             onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
             required
             placeholder="Full name"
-            className="w-full rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-cyan-400/40 focus:outline-none"
+            className="w-full rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-slate-950/55 px-4 py-3 text-sm text-black dark:text-white placeholder:text-black dark:placeholder:text-white focus:border-cyan-400/40 focus:outline-none"
           />
           <input
             value={form.email}
@@ -50,7 +50,7 @@ export default function Register() {
             required
             type="email"
             placeholder="Email address"
-            className="w-full rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-cyan-400/40 focus:outline-none"
+            className="w-full rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-slate-950/55 px-4 py-3 text-sm text-black dark:text-white placeholder:text-black dark:placeholder:text-white focus:border-cyan-400/40 focus:outline-none"
           />
           <input
             value={form.password}
@@ -58,7 +58,7 @@ export default function Register() {
             required
             type="password"
             placeholder="Password"
-            className="w-full rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-cyan-400/40 focus:outline-none"
+            className="w-full rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-slate-950/55 px-4 py-3 text-sm text-black dark:text-white placeholder:text-black dark:placeholder:text-white focus:border-cyan-400/40 focus:outline-none"
           />
           <button
             type="submit"
