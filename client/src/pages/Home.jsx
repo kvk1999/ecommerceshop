@@ -37,7 +37,7 @@ export default function Home() {
       <section className="glass-card grid gap-10 p-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-center">
         <div className="space-y-8">
           <span className="badge-pill border-cyan-400/20 bg-cyan-400/10 text-cyan-700 dark:border-cyan-400/30 dark:bg-cyan-500/10 dark:text-cyan-200">
-            Fullstack Commerce
+            Electronics & Gadgets
           </span>
           <div className="space-y-4 max-w-2xl">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl xl:text-6xl dark:text-white light:text-slate-950">
