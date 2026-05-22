@@ -6,7 +6,10 @@ import { useAuth } from "../context/AuthContext";
 function Section({ title, children }) {
   return (
     <div className="glass-card p-6">
-      <h2 className="text-xl font-bold">{title}</h2>
+      <h2 className="text-xl font-bold text-white light:text-slate-900">
+        {title}
+      </h2>
+
       <div className="mt-4">{children}</div>
     </div>
   );
@@ -18,6 +21,7 @@ function Field({ label, children }) {
       <div className="mb-2 text-sm font-semibold text-slate-300 light:text-slate-700">
         {label}
       </div>
+
       {children}
     </label>
   );
@@ -25,12 +29,12 @@ function Field({ label, children }) {
 
 const inputClass =
   "w-full rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-white " +
-  "placeholder:text-slate-400 focus:border-cyan-400/40 focus:outline-none " +
+  "placeholder:text-white/70 focus:border-cyan-400/40 focus:outline-none " +
   "light:bg-white/90 light:text-slate-900 light:border-slate-200/60 " +
   "light:placeholder:text-slate-900/70";
 
 export default function MyAccount() {
-  const { loggedIn, logout } = useAuth();
+  const { loggedIn } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [account, setAccount] = useState(null);
@@ -60,55 +64,49 @@ export default function MyAccount() {
     isDefault: false,
   });
 
-  const [editingAddressId, setEditingAddressId] = useState(null);
-
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
-  const [deletingAccount, setDeletingAccount] = useState(false);
 
   const addresses = useMemo(() => account?.addresses || [], [account]);
 
   useEffect(() => {
     if (!loggedIn) return;
+
     (async () => {
       try {
         setLoading(true);
+
         const res = await api.get("/account/me");
+
         setAccount(res.data.user);
+
         setProfileForm({
           name: res.data.user.name || "",
           fullName: res.data.user.fullName || "",
           email: res.data.user.email || "",
         });
-        setProfileImageUrl(res.data.user.profileImageUrl || "");
+
+        setProfileImageUrl(
+          res.data.user.profileImageUrl || ""
+        );
       } catch (e) {
-        toast.error(e?.response?.data?.message || "Failed to load account");
+        toast.error(
+          e?.response?.data?.message ||
+            "Failed to load account"
+        );
       } finally {
         setLoading(false);
       }
     })();
   }, [loggedIn]);
 
-  function resetAddressForm() {
-    setEditingAddressId(null);
-    setAddressForm({
-      label: "Home",
-      fullName: "",
-      line1: "",
-      line2: "",
-      city: "",
-      postalCode: "",
-      country: "IN",
-      phone: "",
-      isDefault: false,
-    });
-  }
-
   if (!loggedIn) {
     return (
       <section className="space-y-6 pt-10">
         <div className="glass-card p-10 text-center">
-          <p className="text-lg font-semibold">Please log in to manage your account.</p>
+          <p className="text-lg font-semibold text-white light:text-slate-900">
+            Please log in to manage your account.
+          </p>
         </div>
       </section>
     );
@@ -117,138 +115,382 @@ export default function MyAccount() {
   if (loading || !account) {
     return (
       <div className="pt-10">
-        <div className="glass-card p-10 text-center">Loading account...</div>
+        <div className="glass-card p-10 text-center text-white light:text-slate-900">
+          Loading account...
+        </div>
       </div>
     );
   }
 
   return (
     <section className="space-y-6 pt-10">
+
+      {/* HEADER */}
       <div className="glass-card p-6">
-        <h1 className="text-3xl font-bold">My Account</h1>
+        <h1 className="text-3xl font-bold text-white light:text-slate-900">
+          My Account
+        </h1>
+
         <p className="mt-2 text-slate-400 light:text-slate-600">
           Manage profile, addresses, and security.
         </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+
+        {/* LEFT SIDE */}
+        <div className="space-y-6 lg:col-span-2">
 
           {/* PROFILE */}
           <Section title="Profile">
+
             <form className="space-y-4">
+
               <Field label="Username">
-                <input className={inputClass} placeholder="Enter username" />
+                <input
+                  className={inputClass}
+                  placeholder="Enter username"
+                  value={profileForm.name}
+                  onChange={(e) =>
+                    setProfileForm((p) => ({
+                      ...p,
+                      name: e.target.value,
+                    }))
+                  }
+                />
               </Field>
 
               <Field label="Full name">
-                <input className={inputClass} placeholder="Enter full name" />
+                <input
+                  className={inputClass}
+                  placeholder="Enter full name"
+                  value={profileForm.fullName}
+                  onChange={(e) =>
+                    setProfileForm((p) => ({
+                      ...p,
+                      fullName: e.target.value,
+                    }))
+                  }
+                />
               </Field>
 
               <Field label="Email">
-                <input type="email" className={inputClass} placeholder="Enter email address" />
+                <input
+                  type="email"
+                  className={inputClass}
+                  placeholder="Enter email address"
+                  value={profileForm.email}
+                  onChange={(e) =>
+                    setProfileForm((p) => ({
+                      ...p,
+                      email: e.target.value,
+                    }))
+                  }
+                />
               </Field>
 
-              <button className="btn-primary w-full">Save changes</button>
+              <button
+                type="button"
+                className="btn-primary w-full"
+              >
+                Save changes
+              </button>
+
             </form>
+
           </Section>
 
           {/* PASSWORD */}
           <Section title="Password">
+
             <form className="space-y-4">
+
               <Field label="Current password">
-                <input type="password" className={inputClass} placeholder="Enter current password" />
+                <input
+                  type="password"
+                  className={inputClass}
+                  placeholder="Enter current password"
+                  value={passwordForm.currentPassword}
+                  onChange={(e) =>
+                    setPasswordForm((p) => ({
+                      ...p,
+                      currentPassword: e.target.value,
+                    }))
+                  }
+                />
               </Field>
 
               <Field label="New password">
-                <input type="password" className={inputClass} placeholder="Enter new password" />
+                <input
+                  type="password"
+                  className={inputClass}
+                  placeholder="Enter new password"
+                  value={passwordForm.newPassword}
+                  onChange={(e) =>
+                    setPasswordForm((p) => ({
+                      ...p,
+                      newPassword: e.target.value,
+                    }))
+                  }
+                />
               </Field>
 
-              <button className="btn-secondary w-full">Update password</button>
+              <button
+                type="button"
+                className="btn-primary w-full"
+              >
+                Update password
+              </button>
+
             </form>
+
           </Section>
 
           {/* ADDRESSES */}
           <Section title="Addresses">
-            <Field label="Address line 1">
-              <input className={inputClass} placeholder="Enter address line 1" />
-            </Field>
 
-            <Field label="Address line 2 (optional)">
-              <input className={inputClass} placeholder="Enter address line 2" />
-            </Field>
+            <div className="space-y-4">
 
-            <Field label="City">
-              <input className={inputClass} placeholder="Enter city" />
-            </Field>
+              <Field label="Full name (optional)">
+                <input
+                  className={inputClass}
+                  placeholder="Enter full name"
+                  value={addressForm.fullName}
+                  onChange={(e) =>
+                    setAddressForm((p) => ({
+                      ...p,
+                      fullName: e.target.value,
+                    }))
+                  }
+                />
+              </Field>
 
-            <Field label="Postal code">
-              <input className={inputClass} placeholder="Enter postal code" />
-            </Field>
+              <Field label="Address line 1">
+                <input
+                  className={inputClass}
+                  placeholder="Enter address line 1"
+                  value={addressForm.line1}
+                  onChange={(e) =>
+                    setAddressForm((p) => ({
+                      ...p,
+                      line1: e.target.value,
+                    }))
+                  }
+                />
+              </Field>
 
-            <Field label="Phone (optional)">
-              <input className={inputClass} placeholder="Enter phone number" />
-            </Field>
+              <Field label="Address line 2 (optional)">
+                <input
+                  className={inputClass}
+                  placeholder="Enter address line 2"
+                  value={addressForm.line2}
+                  onChange={(e) =>
+                    setAddressForm((p) => ({
+                      ...p,
+                      line2: e.target.value,
+                    }))
+                  }
+                />
+              </Field>
+
+              <Field label="City">
+                <input
+                  className={inputClass}
+                  placeholder="Enter city"
+                  value={addressForm.city}
+                  onChange={(e) =>
+                    setAddressForm((p) => ({
+                      ...p,
+                      city: e.target.value,
+                    }))
+                  }
+                />
+              </Field>
+
+              <Field label="Postal code">
+                <input
+                  className={inputClass}
+                  placeholder="Enter postal code"
+                  value={addressForm.postalCode}
+                  onChange={(e) =>
+                    setAddressForm((p) => ({
+                      ...p,
+                      postalCode: e.target.value,
+                    }))
+                  }
+                />
+              </Field>
+
+              <Field label="Phone (optional)">
+                <input
+                  className={inputClass}
+                  placeholder="Enter phone number"
+                  value={addressForm.phone}
+                  onChange={(e) =>
+                    setAddressForm((p) => ({
+                      ...p,
+                      phone: e.target.value,
+                    }))
+                  }
+                />
+              </Field>
+
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={addressForm.isDefault}
+                  onChange={(e) =>
+                    setAddressForm((p) => ({
+                      ...p,
+                      isDefault: e.target.checked,
+                    }))
+                  }
+                />
+
+                <span className="text-sm text-slate-300 light:text-slate-700">
+                  Set as default address
+                </span>
+              </label>
+
+              {/* BUTTONS */}
+              <div className="flex gap-3">
+
+                <button
+                  type="button"
+                  className="btn-primary w-full"
+                >
+                  Add address
+                </button>
+
+                <button
+                  type="button"
+                  className="
+                    w-full rounded-2xl px-4 py-3 text-sm font-semibold
+                    bg-slate-700 text-white transition hover:bg-slate-600
+                    light:bg-slate-200 light:text-slate-900 light:hover:bg-slate-300
+                  "
+                >
+                  Cancel
+                </button>
+
+              </div>
+
+            </div>
+
           </Section>
+
         </div>
 
-        {/* RIGHT PANEL */}
+        {/* RIGHT SIDE */}
         <div className="space-y-6">
 
           {/* PROFILE IMAGE */}
           <Section title="Profile image">
+
             <input
               className={inputClass}
               placeholder="Paste image URL"
               value={profileImageUrl}
-              onChange={(e) => setProfileImageUrl(e.target.value)}
+              onChange={(e) =>
+                setProfileImageUrl(e.target.value)
+              }
             />
 
-            <button className="btn-secondary w-full mt-3 light:bg-slate-200 light:text-slate-900">
+            <button
+              type="button"
+              className="
+                mt-3 w-full rounded-2xl px-4 py-3 text-sm font-semibold
+                bg-slate-800 text-white transition hover:bg-slate-700
+                light:bg-slate-200 light:text-slate-900 light:hover:bg-slate-300
+              "
+            >
               Save image
             </button>
+
           </Section>
 
           {/* DELETE ACCOUNT */}
           <Section title="Danger zone">
+
             <button
-              className="
-                w-full rounded-2xl px-4 py-3 text-sm font-semibold
-                bg-red-500/20 text-red-200 border border-red-400/30
-                hover:bg-red-500/30 transition
-                light:bg-red-100 light:text-red-700 light:border-red-300
-              "
+              type="button"
               onClick={() => setDeleteModalOpen(true)}
+              className="
+                w-full rounded-2xl border border-red-400/30
+                bg-red-500/20 px-4 py-3 text-sm font-semibold
+                text-red-200 transition hover:bg-red-500/30
+                light:border-red-300
+                light:bg-red-100
+                light:text-red-700
+              "
             >
               Delete account
             </button>
+
           </Section>
+
         </div>
+
       </div>
 
       {/* DELETE MODAL */}
       {deleteModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-          <div className="bg-slate-950 light:bg-white p-6 rounded-xl w-[400px]">
-            <h2 className="text-xl font-bold">Delete account</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+
+          <div className="w-full max-w-md rounded-2xl bg-slate-950 p-6 light:bg-white">
+
+            <h2 className="text-xl font-bold text-white light:text-slate-900">
+              Delete account
+            </h2>
+
+            <p className="mt-2 text-slate-400 light:text-slate-600">
+              This action cannot be undone.
+            </p>
 
             <input
               type="password"
-              className={inputClass + " mt-4"}
+              className={`${inputClass} mt-4`}
               placeholder="Enter password to confirm"
               value={deletePassword}
-              onChange={(e) => setDeletePassword(e.target.value)}
+              onChange={(e) =>
+                setDeletePassword(e.target.value)
+              }
             />
 
-            <div className="flex gap-3 mt-6">
-              <button className="btn-secondary w-full">Cancel</button>
-              <button className="bg-red-600 text-white w-full rounded-xl py-2">
+            <div className="mt-6 flex gap-3">
+
+              <button
+                type="button"
+                onClick={() =>
+                  setDeleteModalOpen(false)
+                }
+                className="
+                  w-full rounded-2xl px-4 py-3 text-sm font-semibold
+                  bg-slate-700 text-white transition hover:bg-slate-600
+                  light:bg-slate-200 light:text-slate-900 light:hover:bg-slate-300
+                "
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="
+                  w-full rounded-2xl bg-red-600 px-4 py-3
+                  text-sm font-semibold text-white transition
+                  hover:bg-red-700
+                "
+              >
                 Confirm
               </button>
+
             </div>
+
           </div>
+
         </div>
       )}
+
     </section>
   );
 }
