@@ -44,7 +44,7 @@ export default function Home() {
               Discover premium products with a <span className="bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-500 bg-clip-text text-transparent">modern luxury experience</span>
             </h1>
             <p className="text-base leading-8 text-slate-600 dark:text-slate-300 sm:text-lg">
-              Browse stunning product cards, save favourites, manage your cart, and enjoy consistent light/dark theme styling across every page of ShopSphere.
+              Find trending products, organize your favourites, manage orders with ease, and enjoy a futuristic shopping experience across every device.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
