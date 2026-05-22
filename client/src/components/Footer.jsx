@@ -67,6 +67,12 @@ export default function Footer() {
             >
               Wishlist
             </Link>
+            <Link
+              to="/orders"
+              className="block transition hover:text-slate-900 dark:hover:text-white"
+            >
+              Orders
+            </Link>
           </div>
         </div>
 
