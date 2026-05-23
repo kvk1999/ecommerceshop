@@ -127,7 +127,7 @@
   },
   {
     "id": "p15",
-    "title": "Opera Watch",
+    "title": "Opera Watch (Series 3)",
     "description": "Smartwatch with GPS, heart rate monitoring, and customizable notifications.",
     "price": 149,
     "images": ["icon-watches.svg", "icon-watches.svg"],
@@ -136,8 +136,8 @@
   },
   {
     "id": "p16",
-    "title": "Sonic Car Charger",
-    "description": "Fast wireless car charger with sleek design and secure grip.",
+    "title": "Sonic Car Charger (Livid P12)",
+    "description": "Fast car charger with dual USB ports and compact design for on-the-go charging.",
     "price": 39,
     "images": ["icon-electronics.svg", "icon-electronics.svg"],
     "category": "Electronics",
@@ -154,11 +154,74 @@
   },
   {
     "id": "p18",
-    "title": "Echo Smart Speaker",
+    "title": "Echo Smart Speaker (Volta 10) with Google Assistant",
     "description": "Voice-controlled smart speaker with rich sound and smart home integration.",
     "price": 129,
     "images": ["icon-electronics.svg", "icon-electronics.svg"],
     "category": "Electronics",
     "stock": 24
+  },
+  {
+    "id": "p19",
+    "title": "Nimbus Running Shoes (Z-120)",
+    "description": "High-performance running shoes with responsive cushioning and breathable upper.",
+    "price": 149,
+    "images": ["icon-footwear.svg", "icon-footwear.svg"],
+    "category": "Footwear",
+    "stock": 20
+  },
+  {
+    "id": "p20",
+    "title": "Luxe Leather Wallet",
+    "description": "Premium leather wallet with multiple card slots and RFID protection.",
+    "price": 79,
+    "images": ["icon-bags-wallets.svg", "icon-bags-wallets.svg"],
+    "category": "Bags and Wallets",
+    "stock": 27
+  },
+  {
+    "id": "p21",
+    "title": "Zenith Smartwatch",
+    "description": "Advanced smartwatch with fitness tracking, sleep monitoring, and customizable watch faces.",
+    "price": 199,
+    "images": ["icon-smartwatches.svg", "icon-smartwatches.svg"],
+    "category": "Smart Watches",
+    "stock": 15
+  },
+  {
+    "id": "p22",
+    "title": "Aero Wireless Earbuds (Pro 21)",
+    "description": "True wireless earbuds with active noise cancellation and long battery life.",
+    "price": 179,
+    "images": ["icon-headphones.svg", "icon-headphones.svg"],
+    "category": "Headphones",
+    "stock": 21
+  },
+  {
+    "id": "p23",
+    "title": "Velocity Gaming Keyboard with RGB Lighting",
+    "description": "Mechanical gaming keyboard with customizable RGB lighting and programmable keys.",
+    "price": 129,
+    "images": ["icon-electronics.svg", "icon-electronics.svg"],
+    "category": "Electronics",
+    "stock": 18
+  },
+  {
+    "id": "p24",
+    "title": "Serenity Perfume for Women (Blossom)",
+    "description": "A delicate floral fragrance with notes of rose, peony, and marigold.",
+    "price": 99,
+    "images": ["icon-perfumes.svg", "icon-perfumes.svg"],
+    "category": "Perfumes",
+    "stock": 22
+  },
+  {
+    "id": "p25",
+    "title": "Vortex Wireless Charger (Max 20)",
+    "description": "Sleek wireless charger with fast charging capabilities and minimalist design.",
+    "price": 49,
+    "images": ["icon-electronics.svg", "icon-electronics.svg"],
+    "category": "Electronics",
+    "stock": 35
   }
 ]
