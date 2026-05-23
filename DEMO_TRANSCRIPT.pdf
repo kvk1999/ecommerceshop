@@ -1,0 +1,81 @@
+DEMO TRANSCRIPT (PDF)
+
+ShopSphere Fullstack – End-to-End Demo Transcript
+
+1) Project overview
+Hi everyone. Today I’m demonstrating ShopSphere, a full-stack ecommerce application.
+The UI is built with React + Vite + Tailwind, and the backend is built with Express.
+Data persistence in this project uses JSON-based storage, so the app runs without setting up MongoDB.
+
+2) Start the application
+First, I’ll start the backend server.
+I run the server locally, and it exposes REST APIs under /api.
+Next, I start the frontend development server.
+Once both are running, the ecommerce UI loads in the browser.
+
+3) Browse products
+Now I’ll show product browsing.
+On the Home page, I can view categories and product cards.
+Clicking a product opens the product details page.
+This pulls product data from the backend /api/products route.
+
+4) Search and filter (quick demo)
+Next, I’ll demonstrate search and filter.
+I type into the search bar to find relevant products.
+Then I apply a category filter to narrow down results.
+The product list updates based on the frontend filtering logic using the loaded catalog.
+
+5) Add items to cart (requires login)
+Now I’ll add a product to the cart.
+If I’m not logged in, the app prevents adding to the cart and prompts me to log in.
+So I’ll log in first.
+
+6) Authentication (Login)
+On the Login page, I enter email and password.
+After successful login, the app stores the auth token in localStorage.
+The navigation updates to show authenticated options.
+
+7) Add to cart
+Back to the catalog, I add an item to the cart.
+The frontend calls POST /api/cart with the productId and quantity.
+The cart state updates immediately in the UI.
+
+8) View cart and proceed to checkout
+Now I open the Cart page.
+I can review the selected products and quantities.
+The cart totals are calculated from line items.
+Next, I click “Proceed to Checkout”.
+
+9) Checkout
+On the Checkout page, the form is prefilled using the logged-in user data.
+I enter shipping details such as address, city, and postal code.
+Then I click “Place Order”.
+The frontend sends the order payload to POST /api/orders.
+On the backend, the order is created with status = “Placed”, and the user’s cart is cleared.
+After success, the user is redirected to the Orders page.
+
+10) Order history (Orders page)
+Now I’m on the Order History page.
+This page fetches orders from GET /api/orders, filtered by the authenticated user.
+Each order is displayed via an OrderCard component.
+I can see the order id, customer details, status, created date, and items with totals.
+
+11) Cancel order (status-based action)
+Next, I demonstrate order cancellation.
+On an order with status “Placed”, the “Cancel Order” button is available.
+Clicking it opens a cancellation modal.
+I enter a cancellation reason, confirm, and the app calls PATCH /api/orders/:orderId/cancel.
+On the backend, the API validates ownership and ensures the order is currently “Placed”.
+Then it updates the status to “Cancelled” and stores the cancellation reason.
+The UI reflects the updated status after the response.
+
+12) Summary / closing
+That concludes the demo.
+ShopSphere shows end-to-end ecommerce flows:
+- browse products
+- search/filter
+- authenticated cart and checkout
+- create orders and view order history
+- cancel orders with validation
+
+Thanks for watching.
