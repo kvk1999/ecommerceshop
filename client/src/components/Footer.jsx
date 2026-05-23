@@ -112,7 +112,7 @@ export default function Footer() {
 
       {/* COPYRIGHT */}
       <div className="mt-10 border-t border-slate-200/40 pt-6 text-center text-sm text-slate-700 dark:border-white/10 dark:text-slate-500">
-        © {new Date().getFullYear()} ShopSphere. Built for modern fullstack commerce.
+        © {new Date().getFullYear()} ShopSphere. All Rights and Commercials.
       </div>
 
     </footer>
