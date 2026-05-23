@@ -1,0 +1,43 @@
+ShopSphere Demo Transcript (Guest User)
+
+1) Home / Landing
+- The user opens the application homepage.
+- The navigation bar shows links like Home, Products, Cart, Wishlist, and Account.
+
+2) Browse Products
+- The user clicks Products and views a grid of product cards.
+- The user can see product title, price, and a short description.
+- The user selects a category using the filter sidebar (if available).
+
+3) Search Product
+- The user uses the search bar to find a product by name.
+- The product list updates based on the search query.
+
+4) Product Details
+- The user clicks a product card to open the Product Details page.
+- The details page shows product image(s), description, and price.
+- The user reviews the information and proceeds to add the item to cart.
+
+5) Add to Cart
+- The user clicks Add to Cart on the product details page.
+- A confirmation appears indicating the item was added.
+- The user opens the Cart page.
+
+6) Update Cart
+- The user increases/decreases quantity for an item.
+- The total price updates accordingly.
+- The user may remove an item from the cart if needed.
+
+7) Checkout
+- The user clicks Checkout.
+- The checkout page collects required details (as per the UI).
+- The user confirms the order.
+
+8) Order Confirmation / Orders Page
+- After checkout, the user is redirected to the Orders page.
+- The Orders list shows recent orders and their statuses.
+- The user can select an order card to view an order summary.
+
+9) End of Demo
+- This completes the end-to-end guest user shopping flow.
+
