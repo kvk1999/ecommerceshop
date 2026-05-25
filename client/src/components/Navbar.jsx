@@ -7,18 +7,30 @@ import {
 
 import { Link, NavLink } from "react-router-dom";
 import SearchBar from "./SearchBar";
+
+import { useState } from "react";
+
+
 import logoSrc from "../assets/ShopSphere-logo.svg";
+
+// (Chatbot button mounted here; modal rendered conditionally via ChatbotHelp)
+
 
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar({ search, setSearch }) {
+
   const { cartItems } = useCart();
   const { toggleTheme, theme } = useTheme();
   const { user, loggedIn, logout } = useAuth();
+  const isAdmin = Boolean(user?.role === "admin");
+
+  const [chatOpen, setChatOpen] = useState(false);
 
   const cartCount = cartItems.reduce(
+
     (sum, item) => sum + item.quantity,
     0
   );
@@ -108,7 +120,7 @@ export default function Navbar({ search, setSearch }) {
           </div>
 
           {/* Icons */}
-          <div className="flex items-center justify-end gap-2 dark:text-slate-300 light:text-slate-700">
+        <div className="flex items-center justify-end gap-2 dark:text-slate-300 light:text-slate-700">
 
             {/* Cart */}
             <NavLink
@@ -126,6 +138,7 @@ export default function Navbar({ search, setSearch }) {
 
             {/* Theme Toggle */}
             <button
+              type="button"
               onClick={toggleTheme}
               className="rounded-full border border-white/10 bg-white/10 p-3 text-slate-800 transition duration-300 hover:bg-white/20 dark:border-white/10 dark:bg-slate-950/40 dark:text-slate-200"
             >
@@ -192,7 +205,18 @@ export default function Navbar({ search, setSearch }) {
                     Wishlist
                   </NavLink>
 
-                  <div className="border-t border-white/10" />
+                  {isAdmin && (
+                    <>
+                      <NavLink
+                        to="/admin/products"
+                        className="block px-4 py-3 text-sm text-slate-200 hover:bg-white/10"
+                      >
+                        Admin Products
+                      </NavLink>
+                      <div className="border-t border-white/10" />
+                    </>
+                  )}
+
 
                   <button
                     type="button"
@@ -215,6 +239,8 @@ export default function Navbar({ search, setSearch }) {
 
           </div>
         </div>
+
+
 
       </div>
     </nav>

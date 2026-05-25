@@ -4,7 +4,7 @@
     "title": "Nebula X Headphones",
     "description": "Spatial audio headphones with metallic neon finish and adaptive noise isolation.",
     "price": 249,
-    "images": ["icon-headphones.svg", "icon-headphones.svg"],
+    "images": ["icon-headphones.svg, icon-headphones.svg"],
     "category": "Headphones",
     "stock": 18
   },
@@ -13,7 +13,7 @@
     "title": "Titan Edge Phone",
     "description": "Dark titanium flagship phone with cinematic display and pro camera array.",
     "price": 899,
-    "images": ["icon-electronics.svg", "icon-electronics.svg"],
+    "images": ["icon-electronics.svg, icon-electronics.svg"],
     "category": "Electronics",
     "stock": 11
   },
@@ -22,7 +22,7 @@
     "title": "Pulse Time Watch",
     "description": "Aero-grade smartwatch with AMOLED face, 10-day battery, and wellness suite.",
     "price": 329,
-    "images": ["icon-smartwatches.svg", "icon-smartwatches.svg"],
+    "images": ["icon-smartwatches.svg, icon-smartwatches.svg"],
     "category": "Smart Watches",
     "stock": 9
   },
@@ -130,7 +130,7 @@
     "title": "Opera Watch (Series 3)",
     "description": "Smartwatch with GPS, heart rate monitoring, and customizable notifications.",
     "price": 149,
-    "images": ["icon-watches.svg", "icon-watches.svg"],
+    "images": ["icon-smartwatches.svg", "icon-smartwatches.svg"],
     "category": "Watches",
     "stock": 17
   },

@@ -1,30 +1,12 @@
-# ShopSphere Fullstack
+# TODO - ShopSphere chatbot widget
 
-Blueprint-inspired ecommerce application with:
+- [ ] Inspect existing chatbot component usage
+- [ ] Update `client/src/components/ChatbotHelp.jsx` to match required widget spec:
+  - [ ] Floating bottom-right button
+  - [ ] Toggle chat window on click
+  - [ ] Header: “ShopSphere AI Support”
+  - [ ] On open: welcome message + 3 quick replies (Track Order, Suggest Gadgets, My Profile)
+  - [ ] Bottom input + Send button
+  - [ ] Quick replies populate/send a message
+- [ ] Run/build (if available) to ensure no React/Tailwind errors
 
-- `client/`: React + Vite + Tailwind frontend
-- `server/`: Express backend with JSON file persistence
-
-## Run
-
-Server:
-
-```bash
-cd server
-npm install
-npm run dev
-```
-
-Client:
-
-```bash
-cd client
-npm install
-npm run dev
-```
-
-## Notes
-
-- The original blueprint asked for MongoDB + Mongoose and JWT authentication.
-- This implementation uses guest sessions plus JSON persistence so it runs immediately without database setup.
-- Product browsing, search, filter, wishlist, cart, checkout, and order history are fully wired end to end.

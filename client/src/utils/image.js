@@ -43,33 +43,42 @@ const ICON_MAP = {
 
 export function normalizePublicPath(p) {
   if (!p) return p;
-  // Remove any leading /public/ or public/ so paths reference asset filenames (e.g. icon-headphones.svg)
-  return p.replace(/^\/?public\//, "").replace(/^.*\//, "");
+
+  if (/^https?:\/\//i.test(p)) {
+    return p;
+  }
+
+  return p.replace(/^\/?public\//, "").replace(/^\/?image\//, "").replace(/^\/?images\//, "");
 }
 
 export function getImageCandidates(p) {
   if (!p) return [];
-  
-  const normalized = normalizePublicPath(p).toLowerCase();
+
+  const normalized = normalizePublicPath(p);
+  if (/^https?:\/\//i.test(normalized)) {
+    return [normalized];
+  }
+
+  const lower = normalized.toLowerCase();
   const candidates = [];
-  
-  const assetMatch = ICON_MAP[normalized] || ICON_MAP[normalized.replace(/\.svg$/, "")];
+
+  const assetMatch = ICON_MAP[lower] || ICON_MAP[lower.replace(/\.svg$/, "")];
   if (assetMatch) {
     candidates.push(assetMatch);
   }
-  
-  // Fallback to server-served assets using the normalized key
-  if (normalized.startsWith("/")) {
-    candidates.push(normalized);
-  } else {
-    candidates.push(`/assets/${normalized}`);
-    candidates.push(`/${normalized}`);
 
-    if (!normalized.endsWith(".svg")) {
-      candidates.push(`/assets/${normalized}.svg`);
-      candidates.push(`/${normalized}.svg`);
+  const cleanPath = normalized.replace(/^\/+/, "");
+  if (cleanPath) {
+    candidates.push(`/public/${cleanPath}`);
+    candidates.push(`/image/${cleanPath}`);
+    candidates.push(`/${cleanPath}`);
+
+    if (!cleanPath.endsWith(".svg")) {
+      candidates.push(`/public/${cleanPath}.svg`);
+      candidates.push(`/image/${cleanPath}.svg`);
+      candidates.push(`/${cleanPath}.svg`);
     }
   }
-  
-  return candidates;
+
+  return [...new Set(candidates)];
 }

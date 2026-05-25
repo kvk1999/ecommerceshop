@@ -22,12 +22,14 @@ router.get("/", (req, res) => {
       return res.status(500).json({ error: "Unable to read icon directory" });
     }
 
+    const baseUrl = `${req.protocol}://${req.get("host")}/public`;
+
     const icons = files
       .filter((name) => name.startsWith("icon-") && name.endsWith(".svg"))
       .map((name) => ({
         name: formatLabel(name),
         filename: name,
-        url: `${req.protocol}://${req.get("host")}/assets/${name}`,
+        url: `${baseUrl}/${name}`,
       }));
 
     res.json({ icons });

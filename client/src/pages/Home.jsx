@@ -4,6 +4,7 @@ import api from "../api/http";
 import ProductCard from "../components/ProductCard";
 import FilterSidebar from "../components/FilterSidebar";
 import Loader from "../components/Loader";
+import ChatbotHelp from "../components/ChatbotHelp";
 
 export default function Home() {
   const { search } = useOutletContext();
@@ -34,6 +35,7 @@ export default function Home() {
 
   return (
     <div className="space-y-10 pt-10">
+      <ChatbotHelp />
       <section className="glass-card grid gap-10 p-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-center">
         <div className="space-y-8">
           <span className="badge-pill border-cyan-400/20 bg-cyan-400/10 text-cyan-700 dark:border-cyan-400/30 dark:bg-cyan-500/10 dark:text-cyan-200">

@@ -27,6 +27,8 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     total: { type: Number, required: true },
+    discountPercent: { type: Number, default: 0 },
+    discountAmount: { type: Number, default: 0 },
     status: { type: String, default: "Placed" },
     cancellationReason: { type: String, default: null },
   },

@@ -36,6 +36,74 @@ const inputClass =
 export default function MyAccount() {
   const { loggedIn } = useAuth();
 
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+
+  async function handleAddAddress() {
+    // Basic client-side validation to match backend requirements
+    if (!addressForm.line1?.trim()) {
+      toast.error("Address line 1 is required");
+      return;
+    }
+    if (!addressForm.city?.trim()) {
+      toast.error("City is required");
+      return;
+    }
+    if (!addressForm.postalCode?.trim()) {
+      toast.error("Postal code is required");
+      return;
+    }
+
+    setLoadingAddresses(true);
+    try {
+      const res = await api.post("/account/addresses", {
+        label: addressForm.label,
+        fullName: addressForm.fullName,
+        line1: addressForm.line1,
+        line2: addressForm.line2,
+        city: addressForm.city,
+        postalCode: addressForm.postalCode,
+        country: addressForm.country,
+        phone: addressForm.phone,
+        isDefault: addressForm.isDefault,
+      });
+
+      setAccount(res.data.user);
+
+      setAddressForm({
+        label: "Home",
+        fullName: "",
+        line1: "",
+        line2: "",
+        city: "",
+        postalCode: "",
+        country: "IN",
+        phone: "",
+        isDefault: false,
+      });
+
+      toast.success("Address saved");
+    } catch (e) {
+      toast.error(e?.response?.data?.message || "Failed to save address");
+    } finally {
+      setLoadingAddresses(false);
+    }
+  }
+
+  async function handleDeleteAddress(addressId) {
+    if (!addressId) return;
+
+    const ok = window.confirm("Delete this address?");
+    if (!ok) return;
+
+    try {
+      const res = await api.delete(`/account/addresses/${addressId}`);
+      setAccount(res.data.user);
+      toast.success("Address deleted");
+    } catch (e) {
+      toast.error(e?.response?.data?.message || "Failed to delete address");
+    }
+  }
+
   const [loading, setLoading] = useState(true);
   const [account, setAccount] = useState(null);
 
@@ -192,6 +260,21 @@ export default function MyAccount() {
               <button
                 type="button"
                 className="btn-primary w-full"
+                onClick={async () => {
+                  try {
+                    const res = await api.patch("/account/", {
+                      name: profileForm.name,
+                      fullName: profileForm.fullName,
+                      email: profileForm.email,
+                    });
+                    setAccount(res.data.user);
+                    toast.success("Profile updated");
+                  } catch (e) {
+                    toast.error(
+                      e?.response?.data?.message || "Failed to update profile"
+                    );
+                  }
+                }}
               >
                 Save changes
               </button>
@@ -238,6 +321,23 @@ export default function MyAccount() {
               <button
                 type="button"
                 className="btn-primary w-full"
+                onClick={async () => {
+                  try {
+                    await api.patch("/account/password", {
+                      currentPassword: passwordForm.currentPassword,
+                      newPassword: passwordForm.newPassword,
+                    });
+                    setPasswordForm({
+                      currentPassword: "",
+                      newPassword: "",
+                    });
+                    toast.success("Password updated");
+                  } catch (e) {
+                    toast.error(
+                      e?.response?.data?.message || "Failed to update password"
+                    );
+                  }
+                }}
               >
                 Update password
               </button>
@@ -249,9 +349,92 @@ export default function MyAccount() {
           {/* ADDRESSES */}
           <Section title="Addresses">
 
-            <div className="space-y-4">
+            {addresses.length > 0 && (
+              <div className="mb-5">
+                <p className="mb-3 text-sm font-semibold text-slate-300 light:text-slate-700">
+                  Saved addresses
+                </p>
+                <div className="space-y-3">
+                  {addresses.map((a) => (
+                    <div
+                      key={a._id || a.id}
+                      className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="font-semibold text-slate-50">
+                            {a.label || "Home"}
+                          </p>
+                          {a.isDefault && (
+                            <span className="mt-1 inline-flex rounded-full bg-cyan-400/20 px-3 py-1 text-xs text-cyan-200">
+                              Default
+                            </span>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          className="rounded-full border border-red-400/30 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-200 transition hover:bg-red-500/20"
+                          onClick={() => handleDeleteAddress(a._id || a.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+
+                      <p className="mt-2 text-slate-300 light:text-slate-700">
+                        {a.fullName ? `${a.fullName}, ` : ""}
+                        {a.line1}{a.line2 ? `, ${a.line2}` : ""}
+                        {`, ${a.city}`}
+                        {a.postalCode ? `, ${a.postalCode}` : ""}
+                      </p>
+                      {a.phone && (
+                        <p className="mt-2 text-slate-400 light:text-slate-500">
+                          Phone: {a.phone}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {addresses.length === 0 && (
+              <p className="text-sm text-slate-400 light:text-slate-600">
+                No addresses saved yet.
+              </p>
+            )}
+
+            <div className="space-y-4 mt-4">
+
+              <button
+                type="button"
+                className="w-full rounded-2xl bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/10 light:bg-slate-100 light:text-slate-900"
+                onClick={() => {
+                  // prefill address form from the default saved address (if any)
+                  const defaultAddr = addresses.find((a) => a.isDefault) || addresses[0];
+                  if (!defaultAddr) return;
+
+                  setAddressForm({
+                    label: defaultAddr.label || "Home",
+                    fullName: defaultAddr.fullName || "",
+                    line1: defaultAddr.line1 || "",
+                    line2: defaultAddr.line2 || "",
+                    city: defaultAddr.city || "",
+                    postalCode: defaultAddr.postalCode || "",
+                    country: defaultAddr.country || "IN",
+                    phone: defaultAddr.phone || "",
+                    isDefault: Boolean(defaultAddr.isDefault),
+                  });
+
+                  toast.success("Prefilled from saved address");
+                }}
+                disabled={addresses.length === 0}
+              >
+                Use saved address
+              </button>
 
               <Field label="Full name (optional)">
+
                 <input
                   className={inputClass}
                   placeholder="Enter full name"
@@ -358,8 +541,10 @@ export default function MyAccount() {
                 <button
                   type="button"
                   className="btn-primary w-full"
+                  onClick={handleAddAddress}
+                  disabled={loadingAddresses}
                 >
-                  Add address
+                  {loadingAddresses ? "Saving..." : "Add address"}
                 </button>
 
                 <button
@@ -369,6 +554,19 @@ export default function MyAccount() {
                     bg-slate-700 text-white transition hover:bg-slate-600
                     light:bg-slate-200 light:text-slate-900 light:hover:bg-slate-300
                   "
+                  onClick={() =>
+                    setAddressForm({
+                      label: "Home",
+                      fullName: "",
+                      line1: "",
+                      line2: "",
+                      city: "",
+                      postalCode: "",
+                      country: "IN",
+                      phone: "",
+                      isDefault: false,
+                    })
+                  }
                 >
                   Cancel
                 </button>
@@ -391,21 +589,82 @@ export default function MyAccount() {
               className={inputClass}
               placeholder="Paste image URL"
               value={profileImageUrl}
-              onChange={(e) =>
-                setProfileImageUrl(e.target.value)
-              }
+              onChange={(e) => setProfileImageUrl(e.target.value)}
             />
 
-            <button
-              type="button"
-              className="
-                mt-3 w-full rounded-2xl px-4 py-3 text-sm font-semibold
-                bg-slate-800 text-white transition hover:bg-slate-700
-                light:bg-slate-200 light:text-slate-900 light:hover:bg-slate-300
-              "
-            >
-              Save image
-            </button>
+            {profileImageUrl?.trim() ? (
+              <img
+                src={profileImageUrl.trim()}
+                alt="Profile"
+                className="mt-4 h-28 w-28 rounded-full object-cover border border-white/10"
+                onError={() => toast.error("Unable to load this image URL")}
+              />
+            ) : (
+              <div className="mt-4 text-sm text-slate-400">
+                No profile image saved yet.
+              </div>
+            )}
+
+            <div className="mt-4 flex gap-3">
+              <button
+                type="button"
+                className="
+                  w-full rounded-2xl px-4 py-3 text-sm font-semibold
+                  bg-slate-800 text-white transition hover:bg-slate-700
+                  light:bg-slate-200 light:text-slate-900 light:hover:bg-slate-300
+                "
+                onClick={async () => {
+                  try {
+                    if (!profileImageUrl?.trim()) {
+                      toast.error("profileImageUrl is required");
+                      return;
+                    }
+                    const res = await api.patch("/account/profile-image", {
+                      profileImageUrl: profileImageUrl.trim(),
+                    });
+                    setAccount(res.data.user);
+                    toast.success("Profile image updated");
+                  } catch (e) {
+                    toast.error(
+                      e?.response?.data?.message || "Failed to update image"
+                    );
+                  }
+                }}
+              >
+                Save image
+              </button>
+
+              <button
+                type="button"
+                disabled={!profileImageUrl?.trim()}
+                className="
+                  w-full rounded-2xl px-4 py-3 text-sm font-semibold
+                  bg-red-500/20 text-red-200 transition hover:bg-red-500/30
+                  disabled:opacity-50 disabled:hover:bg-red-500/20
+                  light:bg-red-100 light:text-red-700 light:hover:bg-red-200
+                "
+                onClick={async () => {
+                  if (!profileImageUrl?.trim()) return;
+                  const ok = window.confirm("Delete profile image?");
+                  if (!ok) return;
+
+                  try {
+                    const res = await api.patch("/account/profile-image", {
+                      profileImageUrl: "",
+                    });
+                    setAccount(res.data.user);
+                    setProfileImageUrl("");
+                    toast.success("Profile image deleted");
+                  } catch (e) {
+                    toast.error(
+                      e?.response?.data?.message || "Failed to delete image"
+                    );
+                  }
+                }}
+              >
+                Delete image
+              </button>
+            </div>
 
           </Section>
 
@@ -480,6 +739,28 @@ export default function MyAccount() {
                   text-sm font-semibold text-white transition
                   hover:bg-red-700
                 "
+                onClick={async () => {
+                  try {
+                    if (!deletePassword?.trim()) {
+                      toast.error("Please enter your password to confirm");
+                      return;
+                    }
+
+                    // Force axios to send request body with DELETE.
+                    await api.request({
+                      method: "DELETE",
+                      url: "/account/",
+                      data: { currentPassword: deletePassword.trim() },
+                    });
+
+                    localStorage.removeItem("shopsphere-token");
+                    window.location.href = "/login";
+                  } catch (e) {
+                    toast.error(
+                      e?.response?.data?.message || "Failed to delete account"
+                    );
+                  }
+                }}
               >
                 Confirm
               </button>

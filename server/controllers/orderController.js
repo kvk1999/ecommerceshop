@@ -7,11 +7,19 @@ export async function getOrders(req, res) {
 }
 
 export async function createOrder(req, res) {
+  const { customer, items, total } = req.body;
+
+  const discountPercent = 30;
+  const discountAmount = Math.max(0, (total * discountPercent) / 100);
+  const finalTotal = Math.max(0, total - discountAmount);
+
   const order = await Order.create({
     userId: req.user._id,
-    customer: req.body.customer,
-    items: req.body.items,
-    total: req.body.total,
+    customer,
+    items,
+    total: finalTotal,
+    discountPercent,
+    discountAmount,
     status: "Placed",
   });
 

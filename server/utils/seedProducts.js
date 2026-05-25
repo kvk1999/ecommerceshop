@@ -1,11 +1,11 @@
 import Product from "../models/Product.js";
 
-// Sample product seed data including `image`, `images` (array) and short `code`
-// `code` is a two-letter brand/category code used by product cards (e.g. "Ba").
+// Product seed data
 const products = [
   {
     title: "Nebula X Headphones",
-    description: "Spatial audio headphones with metallic neon finish and adaptive noise isolation.",
+    description:
+      "Spatial audio headphones with metallic neon finish and adaptive noise isolation.",
     price: 249,
     image: "icon-headphones.svg",
     images: ["icon-headphones.svg"],
@@ -15,7 +15,8 @@ const products = [
   },
   {
     title: "Titan Edge Phone",
-    description: "Dark titanium flagship phone with cinematic display and pro camera array.",
+    description:
+      "Dark titanium flagship phone with cinematic display and pro camera array.",
     price: 899,
     image: "icon-electronics.svg",
     images: ["icon-electronics.svg"],
@@ -25,7 +26,8 @@ const products = [
   },
   {
     title: "Pulse Time Watch",
-    description: "Aero-grade smartwatch with AMOLED face, 10-day battery, and wellness suite.",
+    description:
+      "Aero-grade smartwatch with AMOLED face, 10-day battery, and wellness suite.",
     price: 329,
     image: "icon-smartwatches.svg",
     images: ["icon-smartwatches.svg"],
@@ -35,7 +37,8 @@ const products = [
   },
   {
     title: "Luna Smartwatch",
-    description: "Elegant smartwatch with customizable watch faces and health monitoring.",
+    description:
+      "Elegant smartwatch with customizable watch faces and health monitoring.",
     price: 279,
     image: "icon-smartwatches.svg",
     images: ["icon-smartwatches.svg"],
@@ -45,7 +48,8 @@ const products = [
   },
   {
     title: "Aether Carry Bag",
-    description: "Structured premium commuter bag with water-resistant panels and smart pockets.",
+    description:
+      "Structured premium commuter bag with water-resistant panels and smart pockets.",
     price: 189,
     image: "icon-bags-wallets.svg",
     images: ["icon-bags-wallets.svg"],
@@ -55,7 +59,8 @@ const products = [
   },
   {
     title: "Velocity Sneakers",
-    description: "Lightweight performance sneakers with sculpted sole and futuristic upper.",
+    description:
+      "Lightweight performance sneakers with sculpted sole and futuristic upper.",
     price: 159,
     image: "icon-footwear.svg",
     images: ["icon-footwear.svg"],
@@ -65,7 +70,8 @@ const products = [
   },
   {
     title: "Losa Perfume for men (Woody)",
-    description: "A bold masculine fragrance with notes of cedar, sandalwood, and smoky musk.",
+    description:
+      "A bold masculine fragrance with notes of cedar, sandalwood, and smoky musk.",
     price: 129,
     image: "icon-perfumes.svg",
     images: ["icon-perfumes.svg"],
@@ -75,7 +81,8 @@ const products = [
   },
   {
     title: "Orbit Speaker",
-    description: "360-degree wireless speaker with immersive bass and ambient light halo.",
+    description:
+      "360-degree wireless speaker with immersive bass and ambient light halo.",
     price: 219,
     image: "icon-electronics.svg",
     images: ["icon-electronics.svg"],
@@ -85,7 +92,8 @@ const products = [
   },
   {
     title: "Arc Wallet",
-    description: "Slim RFID wallet crafted with soft-touch finish and magnetic closure.",
+    description:
+      "Slim RFID wallet crafted with soft-touch finish and magnetic closure.",
     price: 89,
     image: "icon-bags-wallets.svg",
     images: ["icon-bags-wallets.svg"],
@@ -95,7 +103,8 @@ const products = [
   },
   {
     title: "Stratus Earbuds",
-    description: "True wireless earbuds with active noise cancellation and touch controls.",
+    description:
+      "True wireless earbuds with active noise cancellation and touch controls.",
     price: 149,
     image: "icon-headphones.svg",
     images: ["icon-headphones.svg"],
@@ -105,7 +114,8 @@ const products = [
   },
   {
     title: "Vortex Gaming Mouse",
-    description: "Ergonomic gaming mouse with customizable RGB lighting and high-precision sensor.",
+    description:
+      "Ergonomic gaming mouse with customizable RGB lighting and high-precision sensor.",
     price: 79,
     image: "icon-electronics.svg",
     images: ["icon-electronics.svg"],
@@ -115,7 +125,8 @@ const products = [
   },
   {
     title: "NOVA Perfume for women (Floral)",
-    description: "A vibrant floral fragrance with notes of jasmine, peony, and fresh citrus.",
+    description:
+      "A vibrant floral fragrance with notes of jasmine, peony, and fresh citrus.",
     price: 99,
     image: "icon-perfumes.svg",
     images: ["icon-perfumes.svg"],
@@ -125,7 +136,8 @@ const products = [
   },
   {
     title: "Portex Backpack",
-    description: "Rugged backpack with modular compartments and weatherproof construction.",
+    description:
+      "Rugged backpack with modular compartments and weatherproof construction.",
     price: 199,
     image: "icon-bags-wallets.svg",
     images: ["icon-bags-wallets.svg"],
@@ -133,29 +145,32 @@ const products = [
     category: "Bags and Wallets",
     stock: 17,
   },
-    {
-      title: "BellaVita Perfume for Men (Musk)",
-      description: "A romantic fragrance with notes of rose, vanilla, and musk.",
-      price: 109,
-      image: "icon-perfumes.svg",
-      images: ["icon-perfumes.svg"],
-      code: "Pe",
-      category: "Perfumes",
-      stock: 18,
-    },
-    {
-      title: "Unity Running Shoes",
-      description: "Comfortable running shoes with breathable mesh and responsive cushioning.",
-      price: 139,
-      image: "icon-footwear.svg",
-      images: ["icon-footwear.svg"],
-      code: "Fo",
-      category: "Footwear",
-      stock: 26,
-    },
+  {
+    title: "BellaVita Perfume for Men (Musk)",
+    description:
+      "A romantic fragrance with notes of rose, vanilla, and musk.",
+    price: 109,
+    image: "icon-perfumes.svg",
+    images: ["icon-perfumes.svg"],
+    code: "Pe",
+    category: "Perfumes",
+    stock: 18,
+  },
+  {
+    title: "Unity Running Shoes",
+    description:
+      "Comfortable running shoes with breathable mesh and responsive cushioning.",
+    price: 139,
+    image: "icon-footwear.svg",
+    images: ["icon-footwear.svg"],
+    code: "Fo",
+    category: "Footwear",
+    stock: 26,
+  },
   {
     title: "Echo Smart Speaker (Volta 10) with Google Assistant",
-    description: "Voice-controlled smart speaker with immersive sound and seamless integration. Supports Google Assistant for hands-free control and smart home management.",
+    description:
+      "Voice-controlled smart speaker with immersive sound and seamless integration.",
     price: 129,
     image: "icon-electronics.svg",
     images: ["icon-electronics.svg"],
@@ -165,7 +180,8 @@ const products = [
   },
   {
     title: "Opera Watch (Series 3)",
-    description: "Luxury watch with sapphire crystal face, leather strap, and intricate dial design.",
+    description:
+      "Luxury watch with sapphire crystal face, leather strap, and intricate dial design.",
     price: 149,
     image: "icon-smartwatches.svg",
     images: ["icon-smartwatches.svg"],
@@ -175,7 +191,8 @@ const products = [
   },
   {
     title: "Sonic Car Charger (Livid P12)",
-    description: "Fast car charger with dual USB ports and compact design for on-the-go charging.",
+    description:
+      "Fast car charger with dual USB ports and compact design.",
     price: 39,
     image: "icon-electronics.svg",
     images: ["icon-electronics.svg"],
@@ -185,7 +202,8 @@ const products = [
   },
   {
     title: "Nimbus Running Shoes (Z-120)",
-    description: "High-performance running shoes with responsive cushioning and breathable upper.",
+    description:
+      "High-performance running shoes with responsive cushioning and breathable upper.",
     price: 149,
     image: "icon-footwear.svg",
     images: ["icon-footwear.svg"],
@@ -195,7 +213,8 @@ const products = [
   },
   {
     title: "Luxe Leather Wallet",
-    description: "Premium leather wallet with multiple card slots and sleek design.",
+    description:
+      "Premium leather wallet with multiple card slots and sleek design.",
     price: 79,
     image: "icon-bags-wallets.svg",
     images: ["icon-bags-wallets.svg"],
@@ -205,7 +224,8 @@ const products = [
   },
   {
     title: "Zenith Smartwatch",
-    description: "Advanced smartwatch with fitness tracking, sleep monitoring, and customizable watch faces.",
+    description:
+      "Advanced smartwatch with fitness tracking, sleep monitoring, and customizable watch faces.",
     price: 199,
     image: "icon-smartwatches.svg",
     images: ["icon-smartwatches.svg"],
@@ -215,7 +235,8 @@ const products = [
   },
   {
     title: "Aero Wireless Earbuds (Pro 21)",
-    description: "True wireless earbuds with active noise cancellation and long battery life.",
+    description:
+      "True wireless earbuds with active noise cancellation and long battery life.",
     price: 179,
     image: "icon-headphones.svg",
     images: ["icon-headphones.svg"],
@@ -225,7 +246,8 @@ const products = [
   },
   {
     title: "Velocity Gaming Keyboard with RGB Lighting",
-    description: "Mechanical gaming keyboard with customizable RGB lighting and programmable keys.",
+    description:
+      "Mechanical gaming keyboard with customizable RGB lighting and programmable keys.",
     price: 129,
     image: "icon-electronics.svg",
     images: ["icon-electronics.svg"],
@@ -235,32 +257,39 @@ const products = [
   },
   {
     title: "Serenity Perfume for women (Blossom)",
-    description: "A delicate floral fragrance with notes of rose, peony, and marigold.",
+    description:
+      "A delicate floral fragrance with notes of rose, peony, and marigold.",
     price: 99,
     image: "icon-perfumes.svg",
     images: ["icon-perfumes.svg"],
     code: "Pe",
     category: "Perfumes",
     stock: 20,
-  }, 
+  },
   {
     title: "Vortex Wireless Charger (Max 20)",
-    description: "Sleek wireless charger with fast charging capabilities and minimalist design.",
+    description:
+      "Sleek wireless charger with fast charging capabilities and minimalist design.",
     price: 49,
     image: "icon-electronics.svg",
     images: ["icon-electronics.svg"],
     code: "El",
     category: "Electronics",
-    stock: 35,   
-  }
+    stock: 35,
+  },
 ];
 
-
 export async function seedProductsIfEmpty() {
-  const existingTitles = new Set((await Product.find({}, "title")).map((product) => product.title));
-  const missingProducts = products.filter((product) => !existingTitles.has(product.title));
-  if (missingProducts.length) {
-    // ensure we insert objects that match the schema — include `image` for compatibility
-    await Product.insertMany(missingProducts);
+  try {
+    const count = await Product.countDocuments();
+
+    if (count === 0) {
+      await Product.insertMany(products);
+      console.log("✅ Products seeded successfully");
+    } else {
+      console.log("ℹ️ Products already exist");
+    }
+  } catch (error) {
+    console.error("❌ Error seeding products:", error);
   }
 }

@@ -19,6 +19,9 @@ export default function Checkout() {
     postalCode: "",
   });
 
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedSavedAddressId, setSelectedSavedAddressId] = useState("");
+
   useEffect(() => {
     api.get("/products").then((res) => setProducts(res.data));
   }, []);
@@ -30,6 +33,35 @@ export default function Checkout() {
       email: user?.email || prev.email,
     }));
   }, [user]);
+
+  useEffect(() => {
+    if (!loggedIn) return;
+
+    (async () => {
+      try {
+        const res = await api.get("/account/me");
+        setSavedAddresses(res.data.user?.addresses || []);
+
+        const defaultAddr =
+          (res.data.user?.addresses || []).find((a) => a.isDefault) ||
+          (res.data.user?.addresses || [])[0];
+
+        if (defaultAddr) {
+          setSelectedSavedAddressId(defaultAddr._id || defaultAddr.id || "");
+
+          setForm((prev) => ({
+            ...prev,
+            address: defaultAddr.line1 || "",
+            city: defaultAddr.city || "",
+            postalCode: defaultAddr.postalCode || "",
+          }));
+        }
+      } catch (e) {
+        // keep manual form usable even if saved addresses fail to load
+        setSavedAddresses([]);
+      }
+    })();
+  }, [loggedIn]);
 
   const detailed = useMemo(
     () =>
@@ -43,6 +75,10 @@ export default function Checkout() {
   );
 
   const total = detailed.reduce((sum, item) => sum + item.lineTotal, 0);
+  const discountPercent = 30;
+  const discountAmount = Math.max(0, (total * discountPercent) / 100);
+  const finalTotal = Math.max(0, total - discountAmount);
+
 
   if (loading) return <div className="pt-10"><Loader label="Preparing checkout..." /></div>;
 
@@ -67,7 +103,9 @@ export default function Checkout() {
         quantity: item.quantity,
         lineTotal: item.lineTotal,
       })),
-      total,
+      total: finalTotal,
+      discountPercent,
+      discountAmount,
     });
     navigate("/orders");
   }
@@ -92,24 +130,70 @@ export default function Checkout() {
           <p className="text-sm text-slate-600 dark:text-slate-400">No payment gateway required — simply confirm your shipping details to place the order.</p>
         </div>
 
-        {[
-          { name: "fullName", label: "Full Name" },
-          { name: "email", label: "Email" },
-          { name: "address", label: "Shipping Address" },
-          { name: "city", label: "City" },
-          { name: "postalCode", label: "Postal Code" },
-        ].map((field) => (
-          <label key={field.name} className="block text-sm text-slate-700 dark:text-slate-300">
-            <span className="mb-2 inline-block font-medium">{field.label}</span>
-            <input
-              required
-              value={form[field.name]}
-              onChange={(event) => setForm((prev) => ({ ...prev, [field.name]: event.target.value }))}
-              placeholder={field.label}
+        <div className="space-y-4">
+          <label className="block text-sm text-slate-700 dark:text-slate-300">
+            <span className="mb-2 inline-block font-medium">Use saved address (optional)</span>
+            <select
+              value={selectedSavedAddressId}
+              onChange={(e) => {
+                const id = e.target.value;
+                setSelectedSavedAddressId(id);
+
+                const addr = savedAddresses.find((a) => (a._id || a.id) === id);
+                if (!addr) return;
+
+                setForm((prev) => ({
+                  ...prev,
+                  address: addr.line1 || "",
+                  city: addr.city || "",
+                  postalCode: addr.postalCode || "",
+                }));
+              }}
               className="w-full rounded-3xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-white outline-none transition duration-200 focus:border-cyan-400/40 focus:ring-4 focus:ring-cyan-400/10 dark:border-white/10 dark:bg-slate-900/60"
-            />
+              disabled={!savedAddresses.length}
+            >
+              {savedAddresses.length ? (
+                savedAddresses.map((a) => {
+                  const value = a._id || a.id;
+                  return (
+                    <option key={value} value={value}>
+                      {a.label || "Address"}{a.isDefault ? " (Default)" : ""}
+                    </option>
+                  );
+                })
+              ) : (
+                <option value="">No saved addresses</option>
+              )}
+            </select>
           </label>
-        ))}
+
+          {[
+            { name: "fullName", label: "Full Name" },
+            { name: "email", label: "Email" },
+            { name: "address", label: "Shipping Address" },
+            { name: "city", label: "City" },
+            { name: "postalCode", label: "Postal Code" },
+          ].map((field) => (
+            <label
+              key={field.name}
+              className="block text-sm text-slate-700 dark:text-slate-300"
+            >
+              <span className="mb-2 inline-block font-medium">{field.label}</span>
+              <input
+                required
+                value={form[field.name]}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    [field.name]: event.target.value,
+                  }))
+                }
+                placeholder={field.label}
+                className="w-full rounded-3xl border border-white/10 bg-slate-950/55 px-4 py-3 text-sm text-white outline-none transition duration-200 focus:border-cyan-400/40 focus:ring-4 focus:ring-cyan-400/10 dark:border-white/10 dark:bg-slate-900/60"
+              />
+            </label>
+          ))}
+        </div>
 
         <button type="submit" className="btn-primary w-full justify-center">
           Place Order
@@ -136,6 +220,14 @@ export default function Checkout() {
             <div className="flex items-center justify-between">
               <span>Subtotal</span>
               <span className="font-semibold text-slate-950 dark:text-white">{currency(total)}</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between">
+              <span>Discount ({discountPercent}%)</span>
+              <span className="font-semibold text-emerald-400">-{currency(discountAmount)}</span>
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              <span>Total after discount</span>
+              <span className="font-semibold text-slate-950 dark:text-white">{currency(finalTotal)}</span>
             </div>
             <div className="mt-3 flex items-center justify-between">
               <span>Shipping</span>

@@ -13,12 +13,14 @@ import iconsRoutes from "./routes/iconsRoutes.js";
 import accountRoutes from "./routes/accountRoutes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const publicDir = path.join(__dirname, "public");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
-app.use("/assets", express.static(path.join(__dirname, "public")));
+app.use("/public", express.static(publicDir));
+app.use("/image", express.static(publicDir));
 
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "shopsphere-server" });

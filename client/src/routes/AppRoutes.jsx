@@ -10,6 +10,8 @@ import Orders from "../pages/Orders";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import MyAccount from "../pages/MyAccount";
+import AdminDashboard from "../pages/AdminDashboard";
+
 
 export default function AppRoutes() {
   return (
@@ -23,9 +25,12 @@ export default function AppRoutes() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/account" element={<MyAccount />} />
+        <Route path="/admin/products" element={<AdminDashboard />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Route>
     </Routes>
   );
 }
+
