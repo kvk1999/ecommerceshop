@@ -11,6 +11,8 @@ import wishlistRoutes from "./routes/wishlistRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import iconsRoutes from "./routes/iconsRoutes.js";
 import accountRoutes from "./routes/accountRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "public");
@@ -32,6 +34,8 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/account", accountRoutes);
+app.use("/api/admin", adminRoutes);
+
 app.use("/api/icons", iconsRoutes);
 
 connectDb()

@@ -11,9 +11,11 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import MyAccount from "../pages/MyAccount";
 import AdminDashboard from "../pages/AdminDashboard";
+import AdminUsers from "../pages/AdminUsers";
 
 
 export default function AppRoutes() {
+
   return (
     <Routes>
       <Route element={<AppLayout />}>
@@ -26,6 +28,7 @@ export default function AppRoutes() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/account" element={<MyAccount />} />
         <Route path="/admin/products" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
