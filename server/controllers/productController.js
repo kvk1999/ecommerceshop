@@ -67,12 +67,25 @@ function resolveAssetFile(value) {
   }
 
   const cleaned = normalized.toLowerCase();
+
+  // If the asset already has an extension, keep it as-is.
+  // This prevents wrong URLs like `file.jpg.svg`.
+  if (/\.[a-z0-9]+$/i.test(cleaned)) {
+    return normalized.replace(/^\/+/, "");
+  }
+
+  // Category icons / aliases (no extension provided): resolve to svg.
   if (cleaned.endsWith(".svg")) {
     return normalized.replace(/^\/+/, "");
   }
 
-  return IMAGE_ALIASES[cleaned] || IMAGE_ALIASES[cleaned.replace(/^icon-/, "")] || `${normalized.replace(/^\/+/, "")}.svg`;
+  return (
+    IMAGE_ALIASES[cleaned] ||
+    IMAGE_ALIASES[cleaned.replace(/^icon-/, "")] ||
+    `${normalized.replace(/^\/+/, "")}.svg`
+  );
 }
+
 
 function toPublicUrl(req, value) {
   const resolved = resolveAssetFile(value);
@@ -84,7 +97,7 @@ function toPublicUrl(req, value) {
     return resolved;
   }
 
-  return `${getPublicBaseUrl(req)}/${resolved}`;
+  return `${getPublicBaseUrl(req)}/${encodeURIComponent(resolved)}`;
 }
 
 function serializeProduct(req, product) {
@@ -130,17 +143,49 @@ export async function getProductById(req, res) {
 }
 
 export async function createProduct(req, res) {
-  const product = await Product.create(req.body);
+  // Multer uploads are expected under field name: `images`
+  // Backend stores filenames into product.image/product.images so existing UI keeps working.
+  const uploadedFiles = req.files || [];
+
+  const body = { ...req.body };
+
+  // If files were uploaded, prefer them over comma-separated filename list.
+  if (Array.isArray(uploadedFiles) && uploadedFiles.length) {
+    const filenames = uploadedFiles.map((f) => f.filename);
+
+    // Keep compatibility with existing product model shape:
+    // - `image` is single string (use first)
+    // - `images` is array of strings
+    body.image = filenames[0];
+    body.images = filenames;
+  } else {
+    // If no files uploaded, allow existing comma-separated images logic.
+    // Client may still send `images` as an array already.
+  }
+
+  const product = await Product.create(body);
   res.status(201).json(serializeProduct(req, product));
 }
 
+
 export async function updateProduct(req, res) {
-  const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const uploadedFiles = req.files || [];
+
+  const body = { ...req.body };
+
+  if (Array.isArray(uploadedFiles) && uploadedFiles.length) {
+    const filenames = uploadedFiles.map((f) => f.filename);
+    body.image = filenames[0];
+    body.images = filenames;
+  }
+
+  const product = await Product.findByIdAndUpdate(req.params.id, body, { new: true });
   if (!product) {
     return res.status(404).json({ message: "Product not found" });
   }
   res.json(serializeProduct(req, product));
 }
+
 
 export async function deleteProduct(req, res) {
   const product = await Product.findByIdAndDelete(req.params.id);

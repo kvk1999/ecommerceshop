@@ -51,33 +51,31 @@ export function normalizePublicPath(p) {
   return p.replace(/^\/?public\//, "").replace(/^\/?image\//, "").replace(/^\/?images\//, "");
 }
 
-export function getImageCandidates(p) {
-  if (!p) return [];
+export function getImageCandidates(image) {
+  if (!image) return [];
 
-  const normalized = normalizePublicPath(p);
-  if (/^https?:\/\//i.test(normalized)) {
-    return [normalized];
+  // Direct external URL
+  if (/^https?:\/\//i.test(image)) {
+    return [image];
   }
 
+  const normalized = normalizePublicPath(image);
   const lower = normalized.toLowerCase();
   const candidates = [];
 
-  const assetMatch = ICON_MAP[lower] || ICON_MAP[lower.replace(/\.svg$/, "")];
+  const assetMatch =
+    ICON_MAP[lower] || ICON_MAP[lower.replace(/\.svg$/, "")];
+
   if (assetMatch) {
     candidates.push(assetMatch);
   }
 
-  const cleanPath = normalized.replace(/^\/+/, "");
+  let cleanPath = normalized.replace(/^\/+/, "");
+
   if (cleanPath) {
     candidates.push(`/public/${cleanPath}`);
     candidates.push(`/image/${cleanPath}`);
     candidates.push(`/${cleanPath}`);
-
-    if (!cleanPath.endsWith(".svg")) {
-      candidates.push(`/public/${cleanPath}.svg`);
-      candidates.push(`/image/${cleanPath}.svg`);
-      candidates.push(`/${cleanPath}.svg`);
-    }
   }
 
   return [...new Set(candidates)];
