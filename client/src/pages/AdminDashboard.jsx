@@ -201,9 +201,9 @@ export default function AdminDashboard() {
       formData.append("stock", String(Number(form.stock || 0)));
       formData.append("code", (form.skuOrCode || "").trim());
 
-      if (form.logo?.trim()) formData.append("image", form.logo.trim());
+      if (form.logo?.trim()) formData.append("images", form.logo.trim());
       for (const f of selectedLogoFiles) {
-        formData.append("image", f);
+        formData.append("images", f);
       }
 
       if (editingProductId) {
