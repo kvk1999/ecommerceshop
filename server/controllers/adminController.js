@@ -35,6 +35,12 @@ export async function listUsersWithOrderHistory(req, res) {
       discountPercent: o.discountPercent,
       discountAmount: o.discountAmount,
       cancellationReason: o.cancellationReason,
+      items: (o.items || []).map((it) => ({
+        productId: it.productId,
+        title: it.title,
+        quantity: it.quantity,
+        lineTotal: it.lineTotal,
+      })),
     });
   }
 

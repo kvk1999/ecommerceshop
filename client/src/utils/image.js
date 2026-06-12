@@ -6,6 +6,8 @@ import iconHeadphones from "../assets/icon-headphones.svg";
 import iconPerfumes from "../assets/icon-perfumes.svg";
 import iconSmartWatches from "../assets/icon-smartwatches.svg";
 
+const BACKEND_URL = "http://localhost:5000";
+
 // Map icon names to imported assets
 const ICON_MAP = {
   "icon-bags-wallets.svg": iconBagsWallets,
@@ -48,7 +50,11 @@ export function normalizePublicPath(p) {
     return p;
   }
 
-  return p.replace(/^\/?public\//, "").replace(/^\/?image\//, "").replace(/^\/?images\//, "");
+  return p
+    .replace(/^\/?public\//, "")
+    .replace(/^\/?image\//, "")
+    .replace(/^\/?images\//, "")
+    .replace(/^\/?uploads\//, "");
 }
 
 export function getImageCandidates(image) {
@@ -70,12 +76,15 @@ export function getImageCandidates(image) {
     candidates.push(assetMatch);
   }
 
-  let cleanPath = normalized.replace(/^\/+/, "");
+  const cleanPath = normalized.replace(/^\/+/, "");
 
   if (cleanPath) {
-    candidates.push(`/public/${cleanPath}`);
-    candidates.push(`/image/${cleanPath}`);
-    candidates.push(`/${cleanPath}`);
+    const uploadName = cleanPath.replace(/^uploads\//, "");
+    candidates.push(`${BACKEND_URL}/uploads/${uploadName}`);
+    candidates.push(`${BACKEND_URL}/public/uploads/${uploadName}`);
+    candidates.push(`${BACKEND_URL}/public/${cleanPath}`);
+    candidates.push(`${BACKEND_URL}/image/${cleanPath}`);
+    candidates.push(`${BACKEND_URL}/${cleanPath}`);
   }
 
   return [...new Set(candidates)];

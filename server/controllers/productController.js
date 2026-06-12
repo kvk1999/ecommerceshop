@@ -30,6 +30,10 @@ function getPublicBaseUrl(req) {
   return `${req.protocol}://${req.get("host")}/public`;
 }
 
+function toStoredImagePath(file) {
+  return `/uploads/${String(file?.filename || "").replace(/^\/+/, "")}`;
+}
+
 function normalizeAssetPath(value) {
   if (!value || typeof value !== "string") {
     return value;
@@ -68,6 +72,16 @@ function resolveAssetFile(value) {
 
   const cleaned = normalized.toLowerCase();
 
+  // Uploaded images are typically stored as raw filenames (e.g. "123-456.jpg")
+  // without any prefix. Map them to /uploads/ so the resulting URL is correct.
+  const looksLikeUploadedFilename = /^[^/]+\.[a-z0-9]+$/i.test(cleaned);
+  const ext = pathExt(normalized);
+  const isImageExt = /^[a-z0-9]+$/i.test(ext) && !cleaned.includes(".svg");
+
+  if (looksLikeUploadedFilename && isImageExt) {
+    return `uploads/${normalized.replace(/^\/+/, "")}`;
+  }
+
   // If the asset already has an extension, keep it as-is.
   // This prevents wrong URLs like `file.jpg.svg`.
   if (/\.[a-z0-9]+$/i.test(cleaned)) {
@@ -86,6 +100,12 @@ function resolveAssetFile(value) {
   );
 }
 
+function pathExt(p) {
+  const m = String(p).match(/\.([a-z0-9]+)$/i);
+  return m ? m[1] : "";
+}
+
+
 
 function toPublicUrl(req, value) {
   const resolved = resolveAssetFile(value);
@@ -97,7 +117,7 @@ function toPublicUrl(req, value) {
     return resolved;
   }
 
-  return `${getPublicBaseUrl(req)}/${encodeURIComponent(resolved)}`;
+  return `${getPublicBaseUrl(req)}/${resolved.replace(/^\/+/, "")}`;
 }
 
 function serializeProduct(req, product) {
@@ -151,7 +171,7 @@ export async function createProduct(req, res) {
 
   // If files were uploaded, prefer them over comma-separated filename list.
   if (Array.isArray(uploadedFiles) && uploadedFiles.length) {
-    const filenames = uploadedFiles.map((f) => f.filename);
+    const filenames = uploadedFiles.map((f) => toStoredImagePath(f));
 
     // Keep compatibility with existing product model shape:
     // - `image` is single string (use first)
@@ -174,7 +194,7 @@ export async function updateProduct(req, res) {
   const body = { ...req.body };
 
   if (Array.isArray(uploadedFiles) && uploadedFiles.length) {
-    const filenames = uploadedFiles.map((f) => f.filename);
+    const filenames = uploadedFiles.map((f) => toStoredImagePath(f));
     body.image = filenames[0];
     body.images = filenames;
   }
