@@ -11,7 +11,7 @@ function classNames(...xs) {
 function Field({ label, children }) {
   return (
     <label className="block">
-      <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#8d9ba8] dark:text-slate-300">
+      <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
         {label}
       </div>
       {children}
@@ -20,15 +20,15 @@ function Field({ label, children }) {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-[#0f172a] placeholder:text-[#94a3b8] transition-colors focus:border-purple-600 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-emerald-300/40";
+  "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-[#0f172a] placeholder:text-slate-400 transition-colors focus:border-purple-600 focus:outline-none dark:border-white/10 dark:bg-white/5 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-emerald-300/40";
 
 function formatINR(v) {
   const n = typeof v === "number" ? v : Number(v);
-  if (!Number.isFinite(n)) return "₹0";
+  if (!Number.isFinite(n)) return "$0";
   try {
-    return `₹${n.toLocaleString("en-IN")}`;
+    return `$${n.toLocaleString("en-US")}`;
   } catch {
-    return `₹${n}`;
+    return `$${n}`;
   }
 }
 
@@ -42,15 +42,10 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState([]);
   const [usersList, setUsersList] = useState([]);
   
-  // Selection tracking context for modifications management
   const [editingProductId, setEditingProductId] = useState(null);
   const [showOnboardForm, setShowOnboardForm] = useState(false);
 
-  useEffect(() => {
-    document.documentElement.classList.remove("light");
-  }, []);
-
-  // Sync chains initialization hook
+  // Dynamic MongoDB Compass Sync Lifecycle Hook
   useEffect(() => {
     if (!loggedIn || authLoading) return;
 
@@ -68,22 +63,38 @@ export default function AdminDashboard() {
 
         const usersPayload = usersRes.data || [];
         setUsersList(
-          usersPayload.map((row) => ({
-            ...row.user,
-            id: row.user?.id || row.user?._id,
-            joinDate: row.user?.joinDate || row.user?.createdAt || "2026-01-01",
-            orders: row.orders || [],
-          }))
+          usersPayload.map((row) => {
+            const rawUser = row.user || row.customer || row;
+            const rawDate = rawUser.createdAt || row.createdAt || rawUser.joinDate || row.joinDate;
+            
+            let computedJoinDate = "";
+            if (rawDate) {
+              try {
+                computedJoinDate = new Date(rawDate).toISOString().split('T')[0];
+              } catch (e) {
+                console.error("Compass timestamp parsing anomaly:", e);
+                computedJoinDate = "";
+              }
+            }
+
+            return {
+              ...rawUser,
+              // Normalize identifier access rules so both configurations work safely
+              _id: rawUser._id || row._id || rawUser.id,
+              id: rawUser.id || rawUser._id || row._id,
+              joinDate: computedJoinDate,
+              orders: row.orders || rawUser.orders || [],
+            };
+          })
         );
       } catch (e) {
-        setError(e?.response?.data?.message || "Failed to load master dashboard sync chains");
+        setError(e?.response?.data?.message || "Failed to synchronize master dashboard records");
       } finally {
         setLoading(false);
       }
     })();
   }, [loggedIn, authLoading]);
 
-  // Derived tracking state flattening individual customer matrices into structural sales pipeline arrays
   const salesRecords = useMemo(() => {
     const list = [];
     usersList.forEach((u) => {
@@ -156,7 +167,6 @@ export default function AdminDashboard() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  // Pre-populates management context and redirects view to configuration tab
   function startEditProduct(prod) {
     setEditingProductId(prod.id);
     setForm({
@@ -227,34 +237,74 @@ export default function AdminDashboard() {
     }
   }
 
+  // FIX: Dynamic Role Toggling Function with Strict MongoDB ID Checking Matchers
+  async function handleToggleUserRole(userId, currentRole) {
+    const currentAdminId = user?.id || user?._id;
+    if (userId === currentAdminId) {
+      alert("Security warning: You cannot toggle your own administrative access permissions while logged into this session.");
+      return;
+    }
+
+    if (!window.confirm(`Are you sure you want to change this user's role to ${currentRole === "admin" ? "customer" : "admin"}?`)) {
+      return;
+    }
+
+    try {
+      setError("");
+      const res = await api.patch(`/admin/users/${userId}/toggle-role`);
+      const updatedRole = res.data.role;
+
+      // Fixed: Matches both standard text id strings and raw MongoDB reference components securely
+      setUsersList((prevList) =>
+        prevList.map((u) => 
+          u._id === userId || u.id === userId ? { ...u, role: updatedRole } : u
+        )
+      );
+    } catch (err) {
+      setError(err?.response?.data?.message || "Failed to modify user role mapping parameters");
+    }
+  }
+
+  // FIX: Handle Onboarding and Sync Real Timestamps
   async function handleOnboardUser(e) {
     e.preventDefault();
     if (!onboardForm.name.trim() || !onboardForm.email.trim() || !onboardForm.password) {
-      setError("Please fill out name, email, and security credential vectors completely.");
+      setError("Please fill out name, email, and security credential fields completely.");
       return;
     }
+
     try {
       setError("");
       setLoading(true);
-      const res = await api.post("/users/onboard", onboardForm);
+      // Backend expects payload keys: { name, email, password, role }
+      const payload = {
+        name: onboardForm.name,
+        email: onboardForm.email,
+        password: onboardForm.password,
+        role: onboardForm.role,
+      };
+
+      const res = await api.post("/admin/users/onboard", payload);
+      const returnedUser = res.data?.user || res.data || {};
+      
+      // Extract the actual database date returned from MongoDB
+      const targetDate = returnedUser.createdAt || new Date().toISOString();
+      const formattedJoinDate = new Date(targetDate).toISOString().split('T')[0];
+      
       const builtUser = {
-        ...(res.data?.user || res.data),
-        joinDate: new Date().toISOString().split('T')[0],
+        ...returnedUser,
+        _id: returnedUser._id || returnedUser.id,
+        id: returnedUser.id || returnedUser._id,
+        joinDate: formattedJoinDate,
         orders: []
       };
-      setUsersList((prev) => [...prev, builtUser]);
+
+      setUsersList((prev) => [builtUser, ...prev]);
       setOnboardForm({ name: "", email: "", password: "", role: "user" });
       setShowOnboardForm(false);
+      setActiveTab("Customers"); // Snap back to view the newly added record
     } catch (err) {
-      const fallbackUser = {
-        ...onboardForm,
-        id: `MOCK-${Date.now()}`,
-        joinDate: new Date().toISOString().split('T')[0],
-        orders: []
-      };
-      setUsersList((prev) => [...prev, fallbackUser]);
-      setOnboardForm({ name: "", email: "", password: "", role: "user" });
-      setShowOnboardForm(false);
+      setError(err?.response?.data?.message || "Could not write credentials to database container");
     } finally {
       setLoading(false);
     }
@@ -263,13 +313,13 @@ export default function AdminDashboard() {
   if (authLoading || loading) {
     return (
       <div className="pt-10">
-        <Loader label="Synchronizing data vectors..." />
+        <Loader label="Synchronizing database documents..." />
       </div>
     );
   }
 
   return (
-    <section className="min-h-[calc(100vh-3rem)] py-6 bg-[#f8fafc] dark:bg-[#0b0f19] transition-colors duration-200">
+    <section className="min-h-[calc(100vh-3rem)] py-6 bg-slate-50 dark:bg-[#0b0f19] transition-colors duration-200">
       <div className="mx-auto w-full max-w-6xl px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
@@ -281,8 +331,8 @@ export default function AdminDashboard() {
                   <div className="h-5 w-5 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-emerald-300 dark:to-cyan-300" />
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-[#0f172a] dark:text-white">Branding</div>
-                  <div className="text-xs text-[#8d9ba8]">Dashboard</div>
+                  <div className="text-sm font-bold text-[#0f172a] dark:text-white">ShopSphere</div>
+                  <div className="text-xs text-slate-500 dark:text-[#8d9ba8]">Dashboard</div>
                 </div>
               </div>
 
@@ -301,7 +351,7 @@ export default function AdminDashboard() {
                       "w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-all duration-200",
                       activeTab === item.label
                         ? "border-purple-200 bg-purple-50 text-purple-700 shadow-xs dark:border-emerald-300/30 dark:bg-emerald-500/10 dark:text-emerald-100"
-                        : "border-transparent bg-transparent text-[#8d9ba8] hover:bg-slate-50 hover:text-[#0f172a] dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
+                        : "border-transparent bg-transparent text-slate-500 hover:bg-slate-50 hover:text-[#0f172a] dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
                     )}
                   >
                     {item.label}
@@ -310,9 +360,9 @@ export default function AdminDashboard() {
               </nav>
 
               <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 dark:border-white/5 dark:bg-white/5">
-                <div className="text-xs font-semibold text-[#8d9ba8]">Session</div>
+                <div className="text-xs font-semibold text-slate-400 dark:text-[#8d9ba8]">Session</div>
                 <div className="mt-1.5 text-sm font-medium text-[#1e293b] dark:text-slate-300">Admin</div>
-                <div className="text-xs text-[#8d9ba8] truncate mt-0.5">{user?.email || "admin@store.com"}</div>
+                <div className="text-xs text-slate-500 dark:text-[#8d9ba8] truncate mt-0.5">{user?.email || "vijaybabbar@yahoo.com"}</div>
               </div>
             </div>
           </aside>
@@ -326,7 +376,7 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* TAB SECTION 1: CONFIGURATION CONTROLS & PRODUCT SHEET */}
+            {/* TAB SECTION 1: OVERVIEW & CONFIGURATION */}
             {activeTab === "Overview" && (
               <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 dark:border-white/10 dark:bg-white/5 shadow-xs">
                 <div className="border-b border-slate-100 pb-4 mb-6 dark:border-white/5 flex items-center justify-between">
@@ -334,7 +384,7 @@ export default function AdminDashboard() {
                     <h2 className="text-lg font-bold text-[#0f172a] dark:text-white">
                       {editingProductId ? "Modify Product Attributes Mapping" : "Product Configuration Sheet"}
                     </h2>
-                    <p className="text-xs text-[#8d9ba8] mt-0.5">Initialize stock files and register content parameters into core data layers.</p>
+                    <p className="text-xs text-slate-500 dark:text-[#8d9ba8] mt-0.5">Initialize stock files and register parameters into core data layers.</p>
                   </div>
                   {editingProductId && (
                     <button type="button" onClick={resetForm} className="text-xs text-purple-600 dark:text-emerald-400 font-bold underline">
@@ -369,7 +419,7 @@ export default function AdminDashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-[#8d9ba8] dark:text-slate-300">Product Hero Image File Selection</div>
+                    <div className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">Product Hero Image File Selection</div>
                     <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-6 text-center transition hover:border-purple-500 min-h-[150px] flex flex-col items-center justify-center gap-2 dark:border-white/10 dark:bg-slate-950/20 dark:hover:border-emerald-400"
                       onDragOver={(e) => { e.preventDefault(); }}
                       onDrop={(e) => {
@@ -396,13 +446,13 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* TAB SECTION 2: PRODUCTS PORTFOLIO VISUAL DIRECTORY */}
+            {/* TAB SECTION 2: PRODUCTS PORTFOLIO */}
             {activeTab === "Products" && (
               <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 dark:border-white/10 dark:bg-white/5 shadow-xs space-y-6">
                 <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4 dark:border-white/5">
                   <div>
                     <h2 className="text-xl font-bold text-[#0f172a] dark:text-white">Master Inventory Catalog</h2>
-                    <p className="text-xs text-[#8d9ba8] mt-0.5">Live monitoring dashboard showing all registered catalog items.</p>
+                    <p className="text-xs text-slate-500 dark:text-[#8d9ba8] mt-0.5">Live monitoring dashboard showing all registered catalog items.</p>
                   </div>
                   <div className="rounded-full border border-slate-200 bg-slate-50 px-4 py-1.5 text-xs font-bold text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
                     {products.length} Products Found
@@ -421,7 +471,6 @@ export default function AdminDashboard() {
                               <div className="h-10 w-10 rounded-full bg-purple-100 dark:bg-emerald-500/15 flex items-center justify-center text-xs" />
                             )}
 
-                            {/* HOVER UTILITIES ACTIONS POP-PANEL */}
                             <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
                               <button type="button" onClick={() => startEditProduct(it)} className="bg-white hover:bg-purple-50 text-slate-900 text-xs font-bold px-2.5 py-1.5 rounded-lg shadow-sm transition">
                                 Edit
@@ -444,49 +493,49 @@ export default function AdminDashboard() {
                           <span className={classNames("text-[10px] font-bold px-2 py-0.5 rounded-sm", 
                             it.stock > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"
                           )}>
-                            {it.stock > 0 ? `${it.stock} units` : "Out of Stock"}
+                            {it.stock > 0 ? `${it.stock} items left` : "Out of Stock"}
                           </span>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="col-span-full text-center text-[#8d9ba8] py-12 text-sm">No inventory logged in master system arrays.</div>
+                    <div className="col-span-full text-center text-slate-400 py-12 text-sm">No inventory logged.</div>
                   )}
                 </div>
               </div>
             )}
 
-            {/* TAB SECTION 3: ORDERS RENDERING DISPATCH TRACKING PIPELINE */}
+            {/* TAB SECTION 3: ORDERS RENDERING */}
             {activeTab === "Orders" && (
               <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 dark:border-white/10 dark:bg-white/5 shadow-xs space-y-6">
                 <div className="border-b border-slate-100 pb-4 dark:border-white/5">
                   <h2 className="text-lg font-bold text-[#0f172a] dark:text-white">Active Order Processing Hub</h2>
-                  <p className="text-xs text-[#8d9ba8] mt-0.5">Real-time status tracking framework, logistics references, and secure transaction summaries.</p>
+                  <p className="text-xs text-slate-400 dark:text-[#8d9ba8] mt-0.5">Real-time status tracking framework, logistics references, and secure summaries.</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 dark:border-white/5 dark:bg-white/5">
-                    <div className="text-xs font-bold text-[#8d9ba8] uppercase">Gross Processing Capital</div>
+                    <div className="text-xs font-bold text-slate-400 dark:text-[#8d9ba8] uppercase">Gross Capital</div>
                     <div className="mt-2 text-2xl font-black text-purple-600 dark:text-emerald-300">{formatINR(totalRevenue)}</div>
                   </div>
                   <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 dark:border-white/5 dark:bg-white/5">
-                    <div className="text-xs font-bold text-[#8d9ba8] uppercase">Active Invoices Pipeline</div>
+                    <div className="text-xs font-bold text-slate-400 dark:text-[#8d9ba8] uppercase">Active Invoices Pipeline</div>
                     <div className="mt-2 text-2xl font-black text-slate-800 dark:text-white">{salesRecords.length} System Records</div>
                   </div>
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-slate-100 dark:border-white/5">
+                <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-white/5">
                   <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
-                    <thead className="bg-slate-50 text-xs font-bold uppercase text-[#8d9ba8] dark:bg-white/5">
+                    <thead className="bg-slate-50 text-xs font-bold uppercase text-slate-500 dark:text-[#8d9ba8] dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
                       <tr>
                         <th className="px-6 py-4">Order Ref ID</th>
                         <th className="px-6 py-4">Customer Account</th>
-                        <th className="px-6 py-4 text-center">Volume Requested</th>
+                        <th className="px-6 py-4 text-center">Volume</th>
                         <th className="px-6 py-4 text-right">Invoiced Total</th>
                         <th className="px-6 py-4 text-center">Fulfillment State</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                    <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                       {salesRecords.length ? (
                         salesRecords.map((sale) => (
                           <tr key={sale.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5">
@@ -496,7 +545,7 @@ export default function AdminDashboard() {
                               <div className="text-[10px] text-slate-400 font-normal">{sale.customerEmail}</div>
                             </td>
                             <td className="px-6 py-4 text-center">
-                              {Array.isArray(sale.items) ? `${sale.items.length} unique lines` : `${sale.items || 1} items`}
+                              {Array.isArray(sale.items) ? `${sale.items.length} lines` : `${sale.items || 1} items`}
                             </td>
                             <td className="px-6 py-4 text-right font-black text-slate-900 dark:text-white">{formatINR(sale.total)}</td>
                             <td className="px-6 py-4 text-center">
@@ -509,7 +558,7 @@ export default function AdminDashboard() {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="5" className="text-center py-10 text-slate-400 text-sm">No transaction files mapped down from user tracking models.</td>
+                          <td colSpan="5" className="text-center py-10 text-slate-400 text-sm">No transaction files mapped down.</td>
                         </tr>
                       )}
                     </tbody>
@@ -518,13 +567,13 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* TAB SECTION 4: CUSTOMERS PROFILE MANAGEMENT PLATFORM INDEX */}
+            {/* TAB SECTION 4: ACCOUNT DIRECTORY */}
             {activeTab === "Customers" && (
               <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 dark:border-white/10 dark:bg-white/5 shadow-xs space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-4 dark:border-white/5">
                   <div>
                     <h2 className="text-lg font-bold text-[#0f172a] dark:text-white">Account Profile Index</h2>
-                    <p className="text-xs text-[#8d9ba8] mt-0.5">Database index containing verified consumer records and administrative access keys.</p>
+                    <p className="text-xs text-slate-400 dark:text-[#8d9ba8] mt-0.5">Database index containing consumer records and administrative access keys.</p>
                   </div>
                   <button type="button" onClick={() => setShowOnboardForm(!showOnboardForm)} className="rounded-xl border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-bold text-purple-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
                     {showOnboardForm ? "View Directory Table" : "+ Provision Account"}
@@ -532,7 +581,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {showOnboardForm ? (
-                  <form onSubmit={handleOnboardUser} className="p-6 border border-slate-100 dark:border-white/5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/20 space-y-4">
+                  <form onSubmit={handleOnboardUser} className="p-6 border border-slate-200 dark:border-white/5 rounded-2xl bg-slate-50/50 dark:bg-slate-900/20 space-y-4">
                     <h3 className="text-sm font-bold text-slate-800 dark:text-white">Provision New Identity Token</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <Field label="Full Account Name">
@@ -547,28 +596,28 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex items-center justify-between pt-2">
                       <Field label="Security clearance">
-  <select 
-    className={classNames(inputClass, "py-2.5")} 
-    value={onboardForm.role} 
-    onChange={(e) => setOnboardForm(p => ({ ...p, role: e.target.value }))}
-  >
-    <option value="user" className="bg-white text-[#0f172a] dark:bg-[#1e293b] dark:text-slate-200">
-      Standard Consumer (User)
-    </option>
-    <option value="admin" className="bg-white text-[#0f172a] dark:bg-[#1e293b] dark:text-slate-200">
-      System Administrator (Admin)
-    </option>
-  </select>
-</Field>
+                        <select 
+                          className={classNames(inputClass, "py-2.5")} 
+                          value={onboardForm.role} 
+                          onChange={(e) => setOnboardForm(p => ({ ...p, role: e.target.value }))}
+                        >
+                          <option value="user" className="bg-white text-[#0f172a] dark:bg-[#1e293b] dark:text-slate-200">
+                            Standard Consumer (User)
+                          </option>
+                          <option value="admin" className="bg-white text-[#0f172a] dark:bg-[#1e293b] dark:text-slate-200">
+                            System Administrator (Admin)
+                          </option>
+                        </select>
+                      </Field>
                       <button type="submit" className="h-11 self-end px-5 rounded-xl bg-purple-600 dark:bg-emerald-500 text-xs font-bold text-white dark:text-slate-950">
                         Commit Credentials
                       </button>
                     </div>
                   </form>
                 ) : (
-                  <div className="overflow-hidden rounded-xl border border-slate-100 dark:border-white/5">
+                  <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-white/5">
                     <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
-                      <thead className="bg-slate-50 text-xs font-bold uppercase text-[#8d9ba8] dark:bg-white/5">
+                      <thead className="bg-slate-50 text-xs font-bold uppercase text-slate-500 dark:text-[#8d9ba8] dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
                         <tr>
                           <th className="px-6 py-4">Account Profile Holder</th>
                           <th className="px-6 py-4">Email Communications Channel</th>
@@ -576,31 +625,47 @@ export default function AdminDashboard() {
                           <th className="px-6 py-4 text-center">Security Credentials Flag</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                      <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                         {usersList.length ? (
-                          usersList.map((usr) => (
-                            <tr key={usr.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5">
-                              <td className="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <div className={classNames("h-2 w-2 rounded-full", usr.role === "admin" ? "bg-purple-500 dark:bg-emerald-400" : "bg-blue-400")} />
-                                {usr.fullName || usr.name || "Anonymous Account"}
-                              </td>
-                              <td className="px-6 py-4 text-xs font-mono">{usr.email}</td>
-                              <td className="px-6 py-4 text-xs font-medium text-slate-400">{usr.joinDate}</td>
-                              <td className="px-6 py-4 text-center">
-                                <span className={classNames("inline-block rounded-md px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide",
-                                  usr.role === "admin" ? "bg-purple-100 text-purple-700 dark:bg-emerald-400/10 dark:text-emerald-300" : "bg-slate-100 text-slate-600 dark:bg-white/10 dark:text-slate-400"
-                                )}>{usr.role}</span>
-                                {usr.orders?.length > 0 && (
-                                  <div className="text-[9px] text-purple-600 dark:text-emerald-400 font-bold mt-1">
-                                    {usr.orders.length} orders logged
+                          usersList.map((usr) => {
+                            // Ensure an extraction point exists for key definitions
+                            const actualRowId = usr._id || usr.id;
+                            return (
+                              <tr 
+                                key={actualRowId} 
+                                onClick={() => handleToggleUserRole(actualRowId, usr.role)}
+                                className="cursor-pointer transition hover:bg-purple-50/40 dark:hover:bg-purple-500/5 select-none"
+                                title="Click this row to toggle user role settings"
+                              >
+                                <td className="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                  <div className={classNames("h-2 w-2 rounded-full", usr.role === "admin" ? "bg-purple-500 dark:bg-emerald-400" : "bg-blue-400")} />
+                                  <div>
+                                    <div>{usr.fullName || usr.name || "Anonymous Account"}</div>
+                                    {Array.isArray(usr.orders) && usr.orders.length > 0 && (
+                                      <div className="text-[10px] text-purple-500 dark:text-emerald-400 font-extrabold mt-0.5">
+                                        {usr.orders.length} orders
+                                      </div>
+                                    )}
                                   </div>
-                                )}
-                              </td>
-                            </tr>
-                          ))
+                                </td>
+                                <td className="px-6 py-4 text-xs font-mono">{usr.email}</td>
+                                <td className="px-6 py-4 text-xs font-medium text-slate-500 dark:text-slate-400">
+                                  {usr.joinDate || "Pending"}
+                                </td>
+                                <td className="px-6 py-4 text-center">
+                                  <span className={classNames(
+                                    "inline-block rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition-colors duration-200",
+                                    usr.role === "admin" ? "bg-purple-100 text-purple-700 dark:bg-emerald-400/10 dark:text-emerald-300" : "bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-400"
+                                  )}>
+                                    {usr.role || "user"}
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })
                         ) : (
                           <tr>
-                            <td colSpan="4" className="text-center py-8 text-slate-400 text-sm">No profiles found in active datasets.</td>
+                            <td colSpan="4" className="text-center py-10 text-slate-400 text-sm">No identity rows logged in active arrays.</td>
                           </tr>
                         )}
                       </tbody>
@@ -609,7 +674,6 @@ export default function AdminDashboard() {
                 )}
               </div>
             )}
-
           </main>
         </div>
       </div>

@@ -1,14 +1,11 @@
 # TODO
 
-- [ ] Upgrade `client/src/pages/AdminDashboard.jsx`:
-  - [ ] Convert editor area to a professional 2-column split.
-  - [ ] Implement drag-and-drop image upload zone with live preview thumbnails.
-  - [ ] Keep existing multipart submission to backend.
-  - [ ] Update product list to a formal data table layout (headers, zebra striping, aligned columns, Edit/Delete actions).
-  - [ ] Add basic UI polish (hover/active/focus styles, empty states, image count).
-- [x] Test manually:
-  - [ ] Create product with drag/drop images + preview.
-  - [ ] Edit product to verify fields populate correctly.
-  - [ ] Delete product works.
-
+- [ ] Create mobile app wrapper using Capacitor (Android + desktop build running in WebView)
+  - [ ] Update `client/package.json` with Capacitor deps and scripts
+  - [ ] Update `client/src/main.jsx` to use `HashRouter` instead of `BrowserRouter` (mobile WebView routing)
+  - [ ] (If needed) Update `client/src/api/http.js` to use configurable API baseURL (no hardcoded localhost)
+  - [ ] Add Capacitor config: `npx cap init`
+  - [ ] Add Android platform: `npx cap add android`
+  - [ ] Add `build:mobile` script: `vite build` + `npx cap sync`
+  - [ ] Run `npm run build:mobile` and test via `npx cap open android`
 
