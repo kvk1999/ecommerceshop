@@ -378,6 +378,43 @@ export default function AdminDashboard() {
             )}
 
             {/* TAB SECTION 1: OVERVIEW & CONFIGURATION */}
+            {(activeTab === "Orders" || activeTab === "Customers") && (
+              <div className="bg-white border border-slate-200 rounded-[2rem] p-3 md:p-4 dark:border-white/10 dark:bg-white/5 shadow-xs">
+                <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 dark:border-white/5 mb-3">
+                  <div>
+                    <h2 className="text-lg font-bold text-[#0f172a] dark:text-white">Admin Records</h2>
+                    <p className="text-xs text-slate-500 dark:text-[#8d9ba8] mt-0.5">Toggle between Orders and Customers.</p>
+                  </div>
+                </div>
+                <div className="flex rounded-2xl border border-slate-200 bg-slate-50/40 p-1 dark:border-white/10 dark:bg-white/5">
+                  <button
+                    type="button"
+                    onClick={() => { setActiveTab("Orders"); setError(""); }}
+                    className={classNames(
+                      "flex-1 rounded-xl px-3 py-2 text-sm font-bold transition",
+                      activeTab === "Orders"
+                        ? "bg-white border border-purple-200 text-purple-700 shadow-xs dark:border-emerald-300/30 dark:bg-emerald-500/10 dark:text-emerald-100"
+                        : "text-slate-500 hover:bg-white/70 dark:text-slate-400 dark:hover:bg-white/10"
+                    )}
+                  >
+                    Orders
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setActiveTab("Customers"); setError(""); }}
+                    className={classNames(
+                      "flex-1 rounded-xl px-3 py-2 text-sm font-bold transition",
+                      activeTab === "Customers"
+                        ? "bg-white border border-purple-200 text-purple-700 shadow-xs dark:border-emerald-300/30 dark:bg-emerald-500/10 dark:text-emerald-100"
+                        : "text-slate-500 hover:bg-white/70 dark:text-slate-400 dark:hover:bg-white/10"
+                    )}
+                  >
+                    Customers
+                  </button>
+                </div>
+              </div>
+            )}
+
             {activeTab === "Overview" && (
               <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 dark:border-white/10 dark:bg-white/5 shadow-xs">
                 <div className="border-b border-slate-100 pb-4 mb-6 dark:border-white/5 flex items-center justify-between">
