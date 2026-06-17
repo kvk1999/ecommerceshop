@@ -79,7 +79,6 @@ export default function AdminDashboard() {
 
             return {
               ...rawUser,
-              // Normalize identifier access rules so both configurations work safely
               _id: rawUser._id || row._id || rawUser.id,
               id: rawUser.id || rawUser._id || row._id,
               joinDate: computedJoinDate,
@@ -237,9 +236,7 @@ export default function AdminDashboard() {
     }
   }
 
-  // FIX: Dynamic Role Toggling Function with Strict MongoDB ID Checking Matchers
   async function handleToggleUserRole(userId, currentRole) {
-
     const currentAdminId = user?.id || user?._id;
     if (userId === currentAdminId) {
       alert("Security warning: You cannot toggle your own administrative access permissions while logged into this session.");
@@ -255,7 +252,6 @@ export default function AdminDashboard() {
       const res = await api.patch(`/admin/users/${userId}/toggle-role`);
       const updatedRole = res.data.role;
 
-      // Fixed: Matches both standard text id strings and raw MongoDB reference components securely
       setUsersList((prevList) =>
         prevList.map((u) => 
           u._id === userId || u.id === userId ? { ...u, role: updatedRole } : u
@@ -266,7 +262,6 @@ export default function AdminDashboard() {
     }
   }
 
-  // FIX: Handle Onboarding and Sync Real Timestamps
   async function handleOnboardUser(e) {
     e.preventDefault();
     if (!onboardForm.name.trim() || !onboardForm.email.trim() || !onboardForm.password) {
@@ -277,7 +272,6 @@ export default function AdminDashboard() {
     try {
       setError("");
       setLoading(true);
-      // Backend expects payload keys: { name, email, password, role }
       const payload = {
         name: onboardForm.name,
         email: onboardForm.email,
@@ -288,7 +282,6 @@ export default function AdminDashboard() {
       const res = await api.post("/admin/users/onboard", payload);
       const returnedUser = res.data?.user || res.data || {};
       
-      // Extract the actual database date returned from MongoDB
       const targetDate = returnedUser.createdAt || new Date().toISOString();
       const formattedJoinDate = new Date(targetDate).toISOString().split('T')[0];
       
@@ -303,7 +296,7 @@ export default function AdminDashboard() {
       setUsersList((prev) => [builtUser, ...prev]);
       setOnboardForm({ name: "", email: "", password: "", role: "user" });
       setShowOnboardForm(false);
-      setActiveTab("Customers"); // Snap back to view the newly added record
+      setActiveTab("Customers");
     } catch (err) {
       setError(err?.response?.data?.message || "Could not write credentials to database container");
     } finally {
@@ -525,25 +518,27 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-white/5">
-                  <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                <div className="w-full overflow-x-auto rounded-xl border border-slate-200 dark:border-white/5 scrollbar-thin">
+                  <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300 min-w-[600px]">
                     <thead className="bg-slate-50 text-xs font-bold uppercase text-slate-500 dark:text-[#8d9ba8] dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
                       <tr>
-                        <th className="px-6 py-4">Order Ref ID</th>
+                        <th className="px-6 py-4 w-[180px]">Order Ref ID</th>
                         <th className="px-6 py-4">Customer Account</th>
-                        <th className="px-6 py-4 text-center">Volume</th>
-                        <th className="px-6 py-4 text-right">Invoiced Total</th>
-                        <th className="px-6 py-4 text-center">Fulfillment State</th>
+                        <th className="px-6 py-4 text-center w-[100px]">Volume</th>
+                        <th className="px-6 py-4 text-right w-[130px]">Invoiced Total</th>
+                        <th className="px-6 py-4 text-center w-[130px]">Fulfillment State</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                       {salesRecords.length ? (
                         salesRecords.map((sale) => (
                           <tr key={sale.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5">
-                            <td className="px-6 py-4 text-xs font-mono font-bold text-slate-900 dark:text-white">{sale.id}</td>
-                            <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">
-                              <div>{sale.customerName}</div>
-                              <div className="text-[10px] text-slate-400 font-normal">{sale.customerEmail}</div>
+                            <td className="px-6 py-4 text-xs font-mono font-bold text-slate-900 dark:text-white max-w-[180px] truncate" title={sale.id}>
+                              {sale.id}
+                            </td>
+                            <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300 max-w-[200px]">
+                              <div className="truncate">{sale.customerName}</div>
+                              <div className="text-[10px] text-slate-400 font-normal truncate">{sale.customerEmail}</div>
                             </td>
                             <td className="px-6 py-4 text-center">
                               {Array.isArray(sale.items) ? `${sale.items.length} lines` : `${sale.items || 1} items`}
@@ -616,20 +611,19 @@ export default function AdminDashboard() {
                     </div>
                   </form>
                 ) : (
-                  <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-white/5">
-                    <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+                  <div className="w-full overflow-x-auto rounded-xl border border-slate-200 dark:border-white/5 scrollbar-thin">
+                    <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300 min-w-[650px]">
                       <thead className="bg-slate-50 text-xs font-bold uppercase text-slate-500 dark:text-[#8d9ba8] dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
                         <tr>
-                          <th className="px-6 py-4">Account Profile Holder</th>
+                          <th className="px-6 py-4 w-[220px]">Account Profile Holder</th>
                           <th className="px-6 py-4">Email Communications Channel</th>
-                          <th className="px-6 py-4">Registration Matrix Date</th>
-                          <th className="px-6 py-4 text-center">Security Credentials Flag</th>
+                          <th className="px-6 py-4 w-[140px]">Registration Matrix Date</th>
+                          <th className="px-6 py-4 text-center w-[140px]">Security Credentials Flag</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                         {usersList.length ? (
                           usersList.map((usr) => {
-                            // Ensure an extraction point exists for key definitions
                             const actualRowId = usr._id || usr.id;
                             return (
                               <tr 
@@ -638,10 +632,10 @@ export default function AdminDashboard() {
                                 className="cursor-pointer transition hover:bg-purple-50/40 dark:hover:bg-purple-500/5 select-none"
                                 title="Click this row to toggle user role settings"
                               >
-                                <td className="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                  <div className={classNames("h-2 w-2 rounded-full", usr.role === "admin" ? "bg-purple-500 dark:bg-emerald-400" : "bg-blue-400")} />
-                                  <div>
-                                    <div>{usr.fullName || usr.name || "Anonymous Account"}</div>
+                                <td className="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center gap-2 max-w-[220px]">
+                                  <div className={classNames("h-2 w-2 rounded-full shrink-0", usr.role === "admin" ? "bg-purple-500 dark:bg-emerald-400" : "bg-blue-400")} />
+                                  <div className="min-w-0">
+                                    <div className="truncate">{usr.fullName || usr.name || "Anonymous Account"}</div>
                                     {Array.isArray(usr.orders) && usr.orders.length > 0 && (
                                       <div className="text-[10px] text-purple-500 dark:text-emerald-400 font-extrabold mt-0.5">
                                         {usr.orders.length} orders
@@ -649,7 +643,9 @@ export default function AdminDashboard() {
                                     )}
                                   </div>
                                 </td>
-                                <td className="px-6 py-4 text-xs font-mono">{usr.email}</td>
+                                <td className="px-6 py-4 text-xs font-mono max-w-[220px] truncate" title={usr.email}>
+                                  {usr.email}
+                                </td>
                                 <td className="px-6 py-4 text-xs font-medium text-slate-500 dark:text-slate-400">
                                   {usr.joinDate || "Pending"}
                                 </td>

@@ -1,11 +1,9 @@
-# TODO
+# TODO - Mobile dashboard layout overflow fix
 
-- [ ] Create mobile app wrapper using Capacitor (Android + desktop build running in WebView)
-  - [ ] Update `client/package.json` with Capacitor deps and scripts
-  - [ ] Update `client/src/main.jsx` to use `HashRouter` instead of `BrowserRouter` (mobile WebView routing)
-  - [ ] (If needed) Update `client/src/api/http.js` to use configurable API baseURL (no hardcoded localhost)
-  - [ ] Add Capacitor config: `npx cap init`
-  - [ ] Add Android platform: `npx cap add android`
-  - [ ] Add `build:mobile` script: `vite build` + `npx cap sync`
-  - [ ] Run `npm run build:mobile` and test via `npx cap open android`
+- [ ] Identify the exact Tailwind classes that create fixed-size/overflow constraints in `client/src/pages/AdminDashboard.jsx`.
+- [ ] Patch mobile table wrappers to prevent horizontal overflow and email/name strings from forcing layout width.
+- [ ] Replace any restrictive container height behavior (if present) with content-driven sizing.
+- [ ] Ensure long emails wrap or ellipsize using `break-all/ break-words / truncate` (no single-line overflow).
+- [ ] Verify the admin dashboard tabs: Overview / Products / Orders / Customers do not create double scrollbars on mobile.
+- [ ] Run the client build/lint (if available) to ensure no syntax issues.
 
