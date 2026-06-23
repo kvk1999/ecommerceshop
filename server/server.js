@@ -20,7 +20,41 @@ const uploadsDir = path.join(__dirname, "server/public/uploads");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Dynamic CORS allowlist for local-network testing + production safety.
+const allowedOrigins = (origin) => {
+  if (!origin) return true; // mobile/native requests may not send Origin
+
+  // Allow production via env
+  const prodOrigin = process.env.CORS_ORIGIN;
+  if (prodOrigin && origin === prodOrigin) return true;
+
+  // Allow same-host (e.g., when using reverse proxy)
+  if (process.env.NODE_ENV === "production") {
+    // If CORS_ORIGIN is not set, block other origins in production.
+    return false;
+  }
+
+  // Allow localhost and common LAN patterns for phone testing
+  const lanRegex =
+    /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.[0-9]{1,3}\.[0-9]{1,3}|10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[0-1])\.[0-9]{1,3}\.[0-9]{1,3})(:[0-9]+)?$/;
+
+  if (lanRegex.test(origin)) return true;
+  return false;
+};
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      try {
+        if (allowedOrigins(origin)) return callback(null, true);
+        return callback(new Error("Not allowed by CORS"));
+      } catch (err) {
+        return callback(err);
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use("/public", express.static(publicDir));
 app.use("/public/uploads", express.static(uploadsDir));

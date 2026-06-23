@@ -1,6 +1,12 @@
-# TODO (ShopSphere)
+# TODO - ECOMMERCESHOP
 
-- [ ] Fix mobile overflow/double-scroll issues in AdminDashboard table wrappers.
-- [ ] Ensure long names/emails wrap correctly on mobile (truncate/break-words).
-- [ ] Build client (web/native asset build) to ensure no syntax issues.
+## Step 1
+- [x] Update frontend API base URL to be dynamic (no brittle hardcoding) in `client/src/api/http.js`.
+
+## Step 2
+- [x] Update backend CORS to dynamically allow local-network IP origins in `server/server.js`.
+
+
+## Step 3
+- [ ] Run backend and client, validate no CORS errors from a phone on the same Wi-Fi.
 
