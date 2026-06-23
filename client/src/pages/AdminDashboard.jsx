@@ -519,7 +519,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="w-full overflow-x-auto rounded-xl border border-slate-200 dark:border-white/5 scrollbar-thin">
-                  <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300 min-w-[600px]">
+                  <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300 min-w-[600px] table-fixed">
                     <thead className="bg-slate-50 text-xs font-bold uppercase text-slate-500 dark:text-[#8d9ba8] dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
                       <tr>
                         <th className="px-6 py-4 w-[180px]">Order Ref ID</th>

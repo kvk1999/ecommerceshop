@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ShopSphere</string>
+    <string name="title_activity_main">ShopSphere</string>
+    <string name="package_name">com.shopsphere.app</string>
+    <string name="custom_url_scheme">com.shopsphere.app</string>
+</resources>
