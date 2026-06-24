@@ -20,13 +20,19 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Dynamic CORS safety layout for local network development + production deployment
+// Inside your server.js folder
 const allowedOrigins = (origin) => {
+  // ✅ CRITICAL FOR ANDROID: Allow native mobile app origins
   if (!origin || origin === "null" || origin.startsWith("file://") || origin.startsWith("capacitor://")) {
     return true;
   }
+
+  // Allow your live Render web frontend links
   if (origin.includes("onrender.com")) {
     return true;
   }
+
+  // Allow local machine routing
   const lanRegex =
     /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.[0-9]{1,3}\.[0-9]{1,3}|10\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[0-1])\.[0-9]{1,3}\.[0-9]{1,3})(:[0-9]+)?$/;
 

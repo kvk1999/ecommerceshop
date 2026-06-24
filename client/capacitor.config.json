@@ -1,5 +1,6 @@
 {
-  "appId": "your.app.id",
-  "appName": "ecommerceshop",
-  "webDir": "dist"
+  "appId": "com.shopsphere.app",
+  "appName": "shopsphere",
+  "webDir": "dist",
+  "bundledWebRuntime": false
 }
