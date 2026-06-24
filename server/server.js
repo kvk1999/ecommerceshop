@@ -24,12 +24,9 @@ const allowedOrigins = (origin) => {
   if (!origin || origin === "null" || origin.startsWith("file://") || origin.startsWith("capacitor://")) {
     return true;
   }
-
-  // Allow your specific Render application URLs explicitly
   if (origin.includes("onrender.com")) {
     return true;
   }
-
   const lanRegex =
     /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.[0-9]{1,3}\.[0-9]{1,3}|10\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[0-1])\.[0-9]{1,3}\.[0-9]{1,3})(:[0-9]+)?$/;
 
