@@ -1,7 +1,16 @@
 import axios from "axios";
 
 function resolveApiBaseUrl() {
-  // If running inside a native Android container (Emulator), route to computer's localhost via 10.0.2.2
+  // 1. Check if running inside a live production build or web fallback
+  // You can toggle this to true when building the final version for your phone
+  const isProduction = true; 
+
+  if (isProduction) {
+    return "https://ecommerceshop-hgbi.onrender.com/api";
+  }
+
+  // 2. Local Development Fallbacks
+  // If running inside an Android Emulator, route to computer's localhost via 10.0.2.2
   if (window?.Capacitor?.getPlatform() === "android" || window?.navigator?.userAgent?.includes("Android")) {
     return "http://10.0.2.2:5000/api";
   }
