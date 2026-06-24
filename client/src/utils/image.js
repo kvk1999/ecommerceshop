@@ -6,7 +6,31 @@ import iconHeadphones from "../assets/icon-headphones.svg";
 import iconPerfumes from "../assets/icon-perfumes.svg";
 import iconSmartWatches from "../assets/icon-smartwatches.svg";
 
-const BACKEND_URL = "http://localhost:5000";
+const defaultBackendUrl = "http://localhost:5000";
+
+function getBackendUrl() {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (typeof envUrl === "string" && envUrl.length > 0) {
+    return envUrl.replace(/\/+$/, "");
+  }
+
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname || "";
+    const origin = window.location.origin || "";
+
+    if (host.includes("onrender.com")) {
+      return "https://ecommerceshop-hgbi.onrender.com";
+    }
+
+    if (host && host !== "localhost" && host !== "127.0.0.1") {
+      return origin;
+    }
+  }
+
+  return defaultBackendUrl;
+}
+
+const BACKEND_URL = getBackendUrl();
 
 // Map icon names to imported assets
 const ICON_MAP = {
