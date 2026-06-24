@@ -1,22 +1,13 @@
 import axios from "axios";
 
 function resolveApiBaseUrl() {
-  // 1. Check if running inside a live production build or web fallback
-  // Set to true to route all mobile traffic directly to Render over the internet
-  const isProduction = true; 
-
-  if (isProduction) {
-    return "https://ecommerceshop-hgbi.onrender.com/api/health"; // Replace with your Render deployment URL
-  }
-
-  // 2. Local Development Fallbacks
-  // If running inside an Android Emulator, route to computer's localhost via 10.0.2.2
+  // 1. If running inside a native Android container (APK/Emulator), route to Render cloud
   if (window?.Capacitor?.getPlatform() === "android" || window?.navigator?.userAgent?.includes("Android")) {
-    return "http://10.0.2.2:5000/api";
+    return "https://ecommerceshop-web.onrender.com/api";
   }
 
-  // Fallback for regular web browsers running on your computer
-  return "http://localhost:5000/api/";
+  // 2. Fallback for regular web browsers running locally on your computer (localhost:5173)
+  return "http://localhost:5000/api";
 }
 
 const api = axios.create({
