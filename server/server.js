@@ -19,28 +19,21 @@ const uploadsDir = path.join(__dirname, "server/public/uploads");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Dynamic CORS allowlist for local-network testing + production safety.
+// Dynamic CORS safety layout for local network development + production deployment
 const allowedOrigins = (origin) => {
-  // ✅ Crucial Fix: Mobile apps and Capacitor native bundles frequently pass no origin header
   if (!origin || origin === "null" || origin.startsWith("file://") || origin.startsWith("capacitor://")) {
     return true;
   }
 
-  // Allow production via env
-  const prodOrigin = process.env.CORS_ORIGIN;
-  if (prodOrigin && origin === prodOrigin) return true;
+  // Allow your specific Render application URLs explicitly
+  if (origin.includes("onrender.com")) {
+    return true;
+  }
 
-  // Allow localhost and common LAN patterns for phone testing
   const lanRegex =
     /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.[0-9]{1,3}\.[0-9]{1,3}|10\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[0-1])\.[0-9]{1,3}\.[0-9]{1,3})(:[0-9]+)?$/;
 
   if (lanRegex.test(origin)) return true;
-
-  // Fallback fallback rule for other deployment structures
-  if (process.env.NODE_ENV === "production") {
-    return false;
-  }
-
   return false;
 };
 
@@ -80,7 +73,7 @@ app.use("/api/icons", iconsRoutes);
 connectDb()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`ShopSphere API running securely on port ${PORT}`);
+      console.log(`ShopSphere API active on port ${PORT}`);
     });
   })
   .catch((error) => {
