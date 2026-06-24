@@ -4,17 +4,19 @@ function resolveApiBaseUrl() {
   // 1. Strict Environment Check for Android App (Capacitor runs on a native scheme)
   const isAndroidApp = 
     window?.location?.origin?.startsWith("capacitor://") || 
-    window?.location?.origin?.startsWith("http://localhost") && !window?.location?.port;
+    (window?.location?.origin?.startsWith("http://localhost") && !window?.location?.port);
 
   const isAndroidUserAgent = window?.navigator?.userAgent?.includes("Android");
 
   if (isAndroidApp || isAndroidUserAgent) {
-    return "http://ecommerceshop-hgbi.onrender.com/api";
+    // FIXED: Changed http to https
+    return "https://ecommerceshop-hgbi.onrender.com/api";
   }
 
   // 2. Check if running on your deployed live Render web URL
   if (window?.location?.hostname?.includes("onrender.com")) {
-    return "http://ecommerceshop-hgbi.onrender.com/api";
+    // FIXED: Changed http to https
+    return "https://ecommerceshop-hgbi.onrender.com/api";
   }
 
   // 3. Fallback for your local computer environment
