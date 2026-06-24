@@ -6,7 +6,7 @@ function resolveApiBaseUrl() {
   const isProduction = true; 
 
   if (isProduction) {
-    return "https://ecommerceshop-hgbi.onrender.com/api"; // Replace with your Render deployment URL
+    return "https://ecommerceshop-hgbi.onrender.com/api/health"; // Replace with your Render deployment URL
   }
 
   // 2. Local Development Fallbacks
