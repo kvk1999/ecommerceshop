@@ -8,6 +8,7 @@ import { productImageUpload } from "../middleware/uploadImageMiddleware.js";
 const router = Router();
 
 router.get("/", getProducts);
+router.get("", getProducts);
 router.get("/:id", getProductById);
 
 router.post(

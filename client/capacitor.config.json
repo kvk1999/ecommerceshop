@@ -1,5 +1,5 @@
 {
-  "appId": "com.shopsphere.app",
-  "appName": "ShopSphere",
+  "appId": "your.app.id",
+  "appName": "ecommerceshop",
   "webDir": "dist"
 }

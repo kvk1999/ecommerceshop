@@ -9,6 +9,8 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const token = localStorage.getItem("shopsphere-token");
     if (!token) {
       setLoading(false);
@@ -17,12 +19,23 @@ export function AuthProvider({ children }) {
 
     api
       .get("/auth/me")
-      .then((res) => setUser(res.data.user))
+      .then((res) => {
+        if (!isMounted) return;
+        setUser(res?.data?.user || null);
+      })
       .catch(() => {
+        if (!isMounted) return;
         localStorage.removeItem("shopsphere-token");
         setUser(null);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!isMounted) return;
+        setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = async (email, password) => {

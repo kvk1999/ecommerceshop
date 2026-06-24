@@ -14,9 +14,12 @@ import AdminDashboard from "../pages/AdminDashboard";
 import AdminUsers from "../pages/AdminUsers";
 
 
-export default function AppRoutes() {
 
+
+
+export default function AppRoutes() {
   return (
+
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
@@ -36,4 +39,5 @@ export default function AppRoutes() {
     </Routes>
   );
 }
+
 

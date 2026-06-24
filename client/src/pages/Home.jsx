@@ -15,10 +15,26 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      api.get("/products").then((res) => setProducts(res.data)),
-      api.get("/icons").then((res) => setIcons(res.data.icons || []))
+      api
+        .get("/products")
+        .then((res) => {
+          // API may return either an array or an object containing products
+          const data = res?.data;
+          const list = Array.isArray(data)
+            ? data
+            : Array.isArray(data?.products)
+              ? data.products
+              : [];
+          setProducts(list);
+        })
+        .catch(() => setProducts([])),
+      api
+        .get("/icons")
+        .then((res) => setIcons(res?.data?.icons || []))
+        .catch(() => setIcons([])),
     ]).finally(() => setLoading(false));
   }, []);
+
 
   const filtered = useMemo(() => {
     const query = search.toLowerCase();

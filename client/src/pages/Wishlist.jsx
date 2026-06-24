@@ -13,10 +13,26 @@ export default function Wishlist() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    api.get("/products").then((res) => setProducts(res.data));
+    api
+      .get("/products")
+      .then((res) => {
+        const data = res?.data;
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.products)
+            ? data.products
+            : Array.isArray(data?.data)
+              ? data.data
+              : [];
+        setProducts(list);
+      })
+      .catch(() => setProducts([]));
   }, []);
 
-  const items = useMemo(() => products.filter((product) => wishlistIds.includes(product.id)), [products, wishlistIds]);
+  const items = useMemo(() => {
+    if (!Array.isArray(products)) return [];
+    return products.filter((product) => wishlistIds.includes(product.id));
+  }, [products, wishlistIds]);
 
   if (loading) return <div className="pt-10"><Loader label="Loading wishlist..." /></div>;
   if (!loggedIn) {

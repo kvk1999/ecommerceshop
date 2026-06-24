@@ -12,7 +12,21 @@ export default function Products() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get("/products").then((res) => setProducts(res.data)).finally(() => setLoading(false));
+    api
+      .get("/products")
+      .then((res) => {
+        const data = res?.data;
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.products)
+            ? data.products
+            : Array.isArray(data?.data)
+              ? data.data
+              : [];
+        setProducts(list);
+      })
+      .catch(() => setProducts([]))
+      .finally(() => setLoading(false));
   }, []);
 
   const categories = ["All", ...new Set(products.map((product) => product.category))];
