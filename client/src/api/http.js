@@ -1,12 +1,12 @@
 import axios from "axios";
 
 function resolveApiBaseUrl() {
-  // 1. If running inside a native Android container (APK/Emulator), route to Render cloud
+  // 1. If running inside a native Android container (APK) or Android Webview, point to Render
   if (window?.Capacitor?.getPlatform() === "android" || window?.navigator?.userAgent?.includes("Android")) {
     return "https://ecommerceshop-web.onrender.com/api";
   }
 
-  // 2. Fallback for regular web browsers running locally on your computer (localhost:5173)
+  // 2. Fallback for your local computer browser (localhost:5173 -> localhost:5000)
   return "http://localhost:5000/api";
 }
 
