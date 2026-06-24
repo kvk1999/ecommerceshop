@@ -9,12 +9,12 @@ function resolveApiBaseUrl() {
   const isAndroidUserAgent = window?.navigator?.userAgent?.includes("Android");
 
   if (isAndroidApp || isAndroidUserAgent) {
-    return "https://ecommerceshop-hgbi.onrender.com/api";
+    return "http://ecommerceshop-hgbi.onrender.com/api";
   }
 
   // 2. Check if running on your deployed live Render web URL
   if (window?.location?.hostname?.includes("onrender.com")) {
-    return "https://ecommerceshop-hgbi.onrender.com/api";
+    return "http://ecommerceshop-hgbi.onrender.com/api";
   }
 
   // 3. Fallback for your local computer environment

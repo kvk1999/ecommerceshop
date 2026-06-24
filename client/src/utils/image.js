@@ -19,7 +19,7 @@ function getBackendUrl() {
     const origin = window.location.origin || "";
 
     if (host.includes("onrender.com")) {
-      return "https://ecommerceshop-hgbi.onrender.com";
+      return "http://ecommerceshop-hgbi.onrender.com";
     }
 
     if (host && host !== "localhost" && host !== "127.0.0.1") {
