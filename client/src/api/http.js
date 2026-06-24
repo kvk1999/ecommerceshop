@@ -2,7 +2,7 @@ import axios from "axios";
 
 function resolveApiBaseUrl() {
   // 1. Check if running inside a live production build or web fallback
-  // You can toggle this to true when building the final version for your phone
+  // Set to true to route all mobile traffic directly to Render over the internet
   const isProduction = true; 
 
   if (isProduction) {
