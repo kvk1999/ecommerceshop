@@ -64,7 +64,7 @@ app.use("/public/uploads", express.static(uploadsDir));
 app.use("/image", express.static(publicDir));
 app.use("/uploads", express.static(uploadsDir));
 
-app.get("/api", (_req, res) => {
+app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "shopsphere-server" });
 });
 
