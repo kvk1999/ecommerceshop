@@ -20,8 +20,6 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Dynamic CORS safety layout for local network development + production deployment
-// Inside your backend server.js file
-// Inside your backend server.js file
 const allowedOrigins = (origin) => {
   // ✅ CRITICAL FOR ANDROID: Allow both native app schemes and local https secure frames
   if (
@@ -29,7 +27,7 @@ const allowedOrigins = (origin) => {
     origin === "null" || 
     origin.startsWith("file://") || 
     origin.startsWith("capacitor://") ||
-    origin === "https://localhost" || // ◄── ADD THIS EXACT LINE HERE
+    origin === "https://localhost" || 
     origin === "http://localhost"
   ) {
     return true;
@@ -73,10 +71,33 @@ app.use("/public/uploads", express.static(uploadsDir));
 app.use("/image", express.static(publicDir));
 app.use("/uploads", express.static(uploadsDir));
 
+// Global health status check endpoint
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "shopsphere-server" });
 });
 
+// ==========================================================================
+// ✅ HTTPS REWRITE MIDDLEWARE: Prevents Android Mixed Content Block
+// ==========================================================================
+app.use((req, res, next) => {
+  const originalJson = res.json;
+  res.json = function (data) {
+    let jsonString = JSON.stringify(data);
+    if (jsonString && jsonString.includes("http://ecommerceshop-hgbi.onrender.com")) {
+      jsonString = jsonString.replaceAll(
+        "http://ecommerceshop-hgbi.onrender.com", 
+        "https://ecommerceshop-hgbi.onrender.com"
+      );
+      return originalJson.call(this, JSON.parse(jsonString));
+    }
+    return originalJson.call(this, data);
+  };
+  next();
+});
+
+// ==========================================================================
+// APPLICATION API ROUTE INSTANCES
+// ==========================================================================
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
