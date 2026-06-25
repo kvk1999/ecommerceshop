@@ -6,7 +6,8 @@ import iconHeadphones from "../assets/icon-headphones.svg";
 import iconPerfumes from "../assets/icon-perfumes.svg";
 import iconSmartWatches from "../assets/icon-smartwatches.svg";
 
-const defaultBackendUrl = "http://localhost:5000";
+const DEFAULT_BACKEND_URL = "https://ecommerceshop-hgbi.onrender.com";
+const LOCAL_BACKEND_URL = "http://localhost:5000";
 
 function getBackendUrl() {
   const envUrl = import.meta.env.VITE_API_BASE_URL;
@@ -19,7 +20,7 @@ function getBackendUrl() {
     const origin = window.location.origin || "";
 
     if (host.includes("onrender.com")) {
-      return "http://ecommerceshop-hgbi.onrender.com";
+      return DEFAULT_BACKEND_URL;
     }
 
     if (host && host !== "localhost" && host !== "127.0.0.1") {
@@ -27,7 +28,7 @@ function getBackendUrl() {
     }
   }
 
-  return defaultBackendUrl;
+  return LOCAL_BACKEND_URL;
 }
 
 const BACKEND_URL = getBackendUrl();

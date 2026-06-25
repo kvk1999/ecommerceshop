@@ -36,7 +36,6 @@ body {
 }
 
 /* Light mode enhancements */
-/* Scope light-mode styles under the .light ancestor to avoid @apply variant use */
 .light .glass-card {
   @apply border-slate-200 bg-white/90 backdrop-blur-xl;
 }
@@ -44,14 +43,6 @@ body {
 .dark .glass-card {
   @apply border-white/10 bg-slate-950/45;
 }
-
-/* Light mode text improvements */
-/* Light mode text improvements removed.
-   Avoid using @apply on utility-named selectors (e.g. .text-slate-500)
-   because it can create circular dependencies with Tailwind/PostCSS.
-   Prefer applying utility classes directly in markup or use custom
-   semantic class names (e.g. .muted, .lead) and map them here if needed.
-*/
 
 @layer utilities {
   .glass-card {
@@ -95,6 +86,6 @@ body {
   }
 }
 
-/* Consolidated light-mode tweaks kept minimal to avoid @apply recursion.
-   Use utilities directly in component markup for text color overrides.
-*/
+/* ==========================================================================
+   BULLETPROOF OVERRIDE: FORCE PERMANENT DESKTOP VIEW LAYOUT FOR ANDROID APK
+   ========================================================================== */

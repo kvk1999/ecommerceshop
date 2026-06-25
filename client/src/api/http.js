@@ -4,25 +4,35 @@ import axios from "axios";
  * Automatically determines the correct backend API URL 
  * depending on whether the app is running locally, on Render, or inside the Android APK.
  */
+const DEFAULT_API_BASE_URL = "https://ecommerceshop-hgbi.onrender.com/api";
+const LOCAL_API_BASE_URL = "http://localhost:5000/api";
+
 function resolveApiBaseUrl() {
-  // 1. Android App Check (Matches Capacitor's native layer or our custom desktop spoof user agent)
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (typeof envUrl === "string" && envUrl.length > 0) {
+    return envUrl.replace(/\/+$/, "");
+  }
+
   const isAndroidApp = window?.location?.origin?.startsWith("capacitor://");
   const isAndroidUserAgent = window?.navigator?.userAgent?.includes("Android");
-  
-  // Also checks for the custom Windows/Chrome user agent we injected into MainActivity.java
-  const isSpoofedDesktopView = window?.navigator?.userAgent?.includes("Windows NT 10.0; Win64; x64") && !window?.location?.port;
+  const isSpoofedDesktopView =
+    window?.navigator?.userAgent?.includes("Windows NT 10.0; Win64; x64") &&
+    !window?.location?.port;
 
   if (isAndroidApp || isAndroidUserAgent || isSpoofedDesktopView) {
-    return "https://ecommerceshop-hgbi.onrender.com/api";
+    return DEFAULT_API_BASE_URL;
   }
 
-  // 2. Check if running on your live deployed web frontend
-  if (window?.location?.hostname?.includes("onrender.com")) {
-    return "https://ecommerceshop-hgbi.onrender.com/api";
+  const hostname = window?.location?.hostname || "";
+  if (hostname.includes("onrender.com")) {
+    return DEFAULT_API_BASE_URL;
   }
 
-  // 3. Fallback for your local development machine environment
-  return "http://localhost:5000/api";
+  if (hostname && hostname !== "localhost" && hostname !== "127.0.0.1") {
+    return `${window.location.origin}/api`;
+  }
+
+  return LOCAL_API_BASE_URL;
 }
 
 // Create the unified Axios instance
