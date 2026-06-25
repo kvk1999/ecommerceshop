@@ -20,9 +20,17 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Dynamic CORS safety layout for local network development + production deployment
+// Inside your backend server.js file
 const allowedOrigins = (origin) => {
-  // ✅ CRITICAL FOR ANDROID: Allow native mobile app origins
-  if (!origin || origin === "null" || origin.startsWith("file://") || origin.startsWith("capacitor://")) {
+  // ✅ CRITICAL FOR ANDROID: Added explicit support for https://localhost
+  if (
+    !origin || 
+    origin === "null" || 
+    origin.startsWith("file://") || 
+    origin.startsWith("capacitor://") ||
+    origin === "https://localhost" || // <-- ADD THIS LINE RIGHT HERE
+    origin === "http://localhost"
+  ) {
     return true;
   }
 
