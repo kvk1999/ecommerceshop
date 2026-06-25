@@ -1,10 +1,6 @@
 {
   "appId": "com.shopsphere.app",
-  "appName": "ShopSphere",
-  "webDir": "dist",
-  "server": {
-    "allowNavigation": [
-      "ecommerceshop-hgbi.onrender.com"
-    ]
-  }
+  "appName": "shopsphere",
+  "webDir": "dist", 
+  "bundledWebRuntime": false
 }
