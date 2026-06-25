@@ -20,7 +20,6 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Dynamic CORS safety layout for local network development + production deployment
-// Inside your server.js folder
 const allowedOrigins = (origin) => {
   // ✅ CRITICAL FOR ANDROID: Allow native mobile app origins
   if (!origin || origin === "null" || origin.startsWith("file://") || origin.startsWith("capacitor://")) {
@@ -40,17 +39,22 @@ const allowedOrigins = (origin) => {
   return false;
 };
 
+// ==========================================================================
+// OPTIMIZED CORS FOR ANDROID NATIVE & WEB INTERACTION
+// ==========================================================================
 app.use(
   cors({
     origin: (origin, callback) => {
       try {
         if (allowedOrigins(origin)) return callback(null, true);
-        return callback(new Error("Not allowed by CORS"));
+        return callback(new Error(`Not allowed by CORS: ${origin}`));
       } catch (err) {
         return callback(err);
       }
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
   })
 );
 

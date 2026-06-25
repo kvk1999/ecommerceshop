@@ -4,35 +4,26 @@ import axios from "axios";
  * Automatically determines the correct backend API URL 
  * depending on whether the app is running locally, on Render, or inside the Android APK.
  */
-const DEFAULT_API_BASE_URL = "https://ecommerceshop-hgbi.onrender.com/api";
-const LOCAL_API_BASE_URL = "http://localhost:5000/api";
-
 function resolveApiBaseUrl() {
-  const envUrl = import.meta.env.VITE_API_BASE_URL;
-  if (typeof envUrl === "string" && envUrl.length > 0) {
-    return envUrl.replace(/\/+$/, "");
-  }
-
+  // 1. Android App Check (Matches Capacitor's native layer or our custom desktop spoof user agent)
   const isAndroidApp = window?.location?.origin?.startsWith("capacitor://");
   const isAndroidUserAgent = window?.navigator?.userAgent?.includes("Android");
-  const isSpoofedDesktopView =
-    window?.navigator?.userAgent?.includes("Windows NT 10.0; Win64; x64") &&
-    !window?.location?.port;
+  
+  // Also checks for the custom Windows/Chrome user agent we injected into MainActivity.java to force desktop view
+  const isSpoofedDesktopView = window?.navigator?.userAgent?.includes("Windows NT 10.0; Win64; x64") && !window?.location?.port;
 
   if (isAndroidApp || isAndroidUserAgent || isSpoofedDesktopView) {
-    return DEFAULT_API_BASE_URL;
+    // Returns your uniform live cloud endpoints for all mobile modules
+    return "https://ecommerceshop-hgbi.onrender.com/api";
   }
 
-  const hostname = window?.location?.hostname || "";
-  if (hostname.includes("onrender.com")) {
-    return DEFAULT_API_BASE_URL;
+  // 2. Check if running directly on your live deployed web frontend
+  if (window?.location?.hostname?.includes("onrender.com")) {
+    return "https://ecommerceshop-hgbi.onrender.com/api";
   }
 
-  if (hostname && hostname !== "localhost" && hostname !== "127.0.0.1") {
-    return `${window.location.origin}/api`;
-  }
-
-  return LOCAL_API_BASE_URL;
+  // 3. Fallback for your local development machine environment
+  return "http://localhost:5000/api";
 }
 
 // Create the unified Axios instance
@@ -46,6 +37,7 @@ const api = axios.create({
 // Interceptor to automatically attach authorization tokens to backend requests
 api.interceptors.request.use(
   (config) => {
+    // Safely reads the active session JWT from storage
     const token = localStorage.getItem("shopsphere-token");
     if (token) {
       config.headers.authorization = `Bearer ${token}`;
