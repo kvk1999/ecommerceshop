@@ -49,4 +49,33 @@ api.interceptors.request.use(
   }
 );
 
+// ==========================================================================
+// LIVE DEBUG INTERCEPTOR: Pops up network failure details directly on the phone
+// ==========================================================================
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    let errorMessage = "";
+
+    if (error.response) {
+      // The server responded with a status code outside the 2xx range
+      errorMessage = `Status: ${error.response.status}\nData: ${JSON.stringify(error.response.data)}`;
+    } else if (error.request) {
+      // The request was made but no response was received (e.g., CORS block or server down)
+      errorMessage = `No response received from backend server.\nTarget URL: ${error.config?.baseURL}${error.config?.url}\nCheck your backend CORS configuration!`;
+    } else {
+      // Something went wrong setting up the request
+      errorMessage = `Request Setup Error: ${error.message}`;
+    }
+
+    // Trigger a native visual window alert box directly on your mobile interface
+    alert(`❌ ShopSphere API Error:\n${errorMessage}`);
+    
+    console.error("Capacitor Network Layer Error Log:", error);
+    return Promise.reject(error);
+  }
+);
+
 export default api;
