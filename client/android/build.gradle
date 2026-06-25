@@ -7,7 +7,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.0'
+        // Use AGP version compatible with Java 11 (if system JDK is Java 11).
+        // AGP 7.4.2 supports running with Java 11.
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath 'com.google.gms:google-services:4.4.4'
 
         // NOTE: Do not place your application dependencies here; they belong

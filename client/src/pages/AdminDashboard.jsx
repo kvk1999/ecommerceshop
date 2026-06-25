@@ -519,7 +519,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="w-full overflow-x-auto rounded-xl border border-slate-200 dark:border-white/5 scrollbar-thin">
-<table className="w-full text-left text-sm text-slate-600 dark:text-slate-300 table-fixed">
+                  <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300 table-fixed">
                     <thead className="bg-slate-50 text-xs font-bold uppercase text-slate-500 dark:text-[#8d9ba8] dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
                       <tr>
                         <th className="px-6 py-4 w-[160px]">Order Ref ID</th>
@@ -533,11 +533,14 @@ export default function AdminDashboard() {
                       {salesRecords.length ? (
                         salesRecords.map((sale) => (
                           <tr key={sale.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5">
-                            <td className="px-6 py-4 text-xs font-mono font-bold text-slate-900 dark:text-white truncate" title={sale.id}>
-                              <span className="inline md:hidden">
-                                {sale.id ? `${sale.id.slice(0, 6)}...` : ""}
+                            {/* ✅ UPDATED TOGGLE ID COLUMN */}
+                            <td className="px-6 py-4 text-xs font-mono order-id-column" title={sale.id}>
+                              <span className="mobile-short-id">
+                                {sale.id ? `${sale.id.substring(0, 6)}...` : ""}
                               </span>
-                              <span className="hidden md:inline">{sale.id}</span>
+                              <span className="desktop-full-id">
+                                {sale.id}
+                              </span>
                             </td>
                             <td className="px-6 py-4 font-semibold text-slate-700 dark:text-slate-300">
                               <div className="flex flex-col min-w-0">

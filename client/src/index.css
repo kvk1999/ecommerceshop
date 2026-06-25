@@ -87,5 +87,28 @@ body {
 }
 
 /* ==========================================================================
-   BULLETPROOF OVERRIDE: FORCE PERMANENT DESKTOP VIEW LAYOUT FOR ANDROID APK
+   ADMIN DASHBOARD RESPONSIVE TOGGLE (DESKTOP VS ANDROID APK)
    ========================================================================== */
+
+/* Default Mobile Behavior (Android View) */
+.order-id-column .desktop-full-id {
+  display: none; /* Hide long MongoDB hexadecimal string on mobile frames */
+}
+
+.order-id-column .mobile-short-id {
+  display: inline;
+  color: #f59e0b; /* Amber highlight matching screenshot specs */
+  font-weight: 600;
+}
+
+/* Desktop Breakpoint Configuration Override */
+@media (min-width: 1200px) {
+  .order-id-column .mobile-short-id {
+    display: none; /* Strip out short strings when grid real estate permits */
+  }
+  
+  .order-id-column .desktop-full-id {
+    display: inline; /* Reveal complete raw database ObjectId securely */
+    color: #e5e7eb;
+  }
+}

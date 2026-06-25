@@ -77,17 +77,26 @@ app.get("/api/health", (_req, res) => {
 });
 
 // ==========================================================================
-// ✅ HTTPS REWRITE MIDDLEWARE: Prevents Android Mixed Content Block
+// ✅ UPDATED HTTPS & LOCALHOST REWRITE MIDDLEWARE
 // ==========================================================================
 app.use((req, res, next) => {
   const originalJson = res.json;
   res.json = function (data) {
     let jsonString = JSON.stringify(data);
-    if (jsonString && jsonString.includes("http://ecommerceshop-hgbi.onrender.com")) {
+    
+    if (jsonString) {
+      // 1. Fix old raw http links
       jsonString = jsonString.replaceAll(
         "http://ecommerceshop-hgbi.onrender.com", 
         "https://ecommerceshop-hgbi.onrender.com"
       );
+      
+      // 2. Fix stray localhost links so they point to your live cloud server instead
+      jsonString = jsonString.replaceAll(
+        "http://localhost:5000", 
+        "https://ecommerceshop-hgbi.onrender.com"
+      );
+      
       return originalJson.call(this, JSON.parse(jsonString));
     }
     return originalJson.call(this, data);
