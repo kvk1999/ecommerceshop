@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "build:mobile": "vite build",
     "cap-rm": "cap rm android",
-  "cap-add": "cap add android"
+    "cap-add": "cap add android"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",
@@ -19,7 +19,8 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hot-toast": "^2.6.0",
-    "react-router-dom": "^7.9.3"
+    "react-router-dom": "^7.9.3",
+    "serve-favicon": "^2.5.1"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.4.1",
