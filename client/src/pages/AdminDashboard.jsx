@@ -45,9 +45,10 @@ export default function AdminDashboard() {
   const [editingProductId, setEditingProductId] = useState(null);
   const [showOnboardForm, setShowOnboardForm] = useState(false);
 
-  // Dynamic MongoDB Compass Sync Lifecycle Hook
+  // Dynamic MongoDB Compass Sync Lifecycle Hook with full Exception Trapping
   useEffect(() => {
     if (!loggedIn || authLoading) return;
+    let isMounted = true;
 
     (async () => {
       try {
@@ -55,56 +56,71 @@ export default function AdminDashboard() {
         setError("");
         
         const [prodRes, usersRes] = await Promise.all([
-          api.get("/products").catch(() => ({ data: [] })),
-          api.get("/admin/users").catch(() => ({ data: [] }))
+          api.get("/products").catch((err) => {
+            console.error("Product fetch error caught safely:", err);
+            return { data: [] };
+          }),
+          api.get("/admin/users").catch((err) => {
+            console.error("Users list fetch error caught safely:", err);
+            return { data: [] };
+          })
         ]);
 
-        setProducts(prodRes.data || []);
+        if (!isMounted) return;
 
-        const usersPayload = usersRes.data || [];
+        setProducts(prodRes?.data || []);
+        const usersPayload = usersRes?.data || [];
+        
         setUsersList(
           usersPayload.map((row) => {
-            const rawUser = row.user || row.customer || row;
-            const rawDate = rawUser.createdAt || row.createdAt || rawUser.joinDate || row.joinDate;
+            const rawUser = row?.user || row?.customer || row || {};
+            const rawDate = rawUser?.createdAt || row?.createdAt || rawUser?.joinDate || row?.joinDate;
             
-            let computedJoinDate = "";
+            let computedJoinDate = "N/A";
             if (rawDate) {
               try {
                 computedJoinDate = new Date(rawDate).toISOString().split('T')[0];
               } catch (e) {
-                console.error("Compass timestamp parsing anomaly:", e);
-                computedJoinDate = "";
+                console.warn("Timestamp parsing anomaly:", e);
               }
             }
 
             return {
               ...rawUser,
-              _id: rawUser._id || row._id || rawUser.id,
-              id: rawUser.id || rawUser._id || row._id,
+              _id: rawUser?._id || row?._id || rawUser?.id,
+              id: rawUser?.id || rawUser?._id || row?._id || Math.random().toString(),
               joinDate: computedJoinDate,
-              orders: row.orders || rawUser.orders || [],
+              orders: row?.orders || rawUser?.orders || [],
+              role: rawUser?.role || "user"
             };
           })
         );
       } catch (e) {
-        setError(e?.response?.data?.message || "Failed to synchronize master dashboard records");
+        console.error("Critical Dashboard Crash Intercepted:", e);
+        setError("Synchronization failure: Core analytics layers could not parse the backend data packet.");
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     })();
+
+    return () => { isMounted = false; };
   }, [loggedIn, authLoading]);
 
   const salesRecords = useMemo(() => {
     const list = [];
+    if (!Array.isArray(usersList)) return list;
+    
     usersList.forEach((u) => {
-      if (Array.isArray(u.orders)) {
+      if (u && Array.isArray(u.orders)) {
         u.orders.forEach((o) => {
-          list.push({
-            ...o,
-            id: o.id || o._id || `TXN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
-            customerName: u.name || u.fullName || "Verified User",
-            customerEmail: u.email
-          });
+          if (o) {
+            list.push({
+              ...o,
+              id: o.id || o._id || `TXN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+              customerName: u.name || u.fullName || "Verified User",
+              customerEmail: u.email || "no-email@store.com"
+            });
+          }
         });
       }
     });
@@ -139,7 +155,9 @@ export default function AdminDashboard() {
   }, [selectedLogoFiles]);
 
   const portfolioItems = useMemo(() => {
+    if (!Array.isArray(products)) return [];
     return products.map((p) => {
+      if (!p) return { id: Math.random().toString(), title: "Malformed Item", price: 0, category: "Error", stock: 0 };
       const thumb = getImageCandidates((p.images && p.images[0]) || p.image).filter(Boolean)[0];
       return {
         id: p.id || p._id,
@@ -155,7 +173,7 @@ export default function AdminDashboard() {
   }, [products]);
 
   const totalRevenue = useMemo(() => {
-    return salesRecords.reduce((sum, item) => sum + (Number(item.total) || 0), 0);
+    return salesRecords.reduce((sum, item) => sum + (Number(item?.total) || 0), 0);
   }, [salesRecords]);
 
   function resetForm() {
@@ -167,13 +185,14 @@ export default function AdminDashboard() {
   }
 
   function startEditProduct(prod) {
+    if (!prod) return;
     setEditingProductId(prod.id);
     setForm({
-      title: prod.title,
-      description: prod.description,
-      price: String(prod.price),
-      category: prod.category,
-      stock: String(prod.stock),
+      title: prod.title || "",
+      description: prod.description || "",
+      price: String(prod.price || 0),
+      category: prod.category || "",
+      stock: String(prod.stock || 0),
       skuOrCode: prod.code || "",
       logo: ""
     });
@@ -181,11 +200,11 @@ export default function AdminDashboard() {
   }
 
   async function handleDeleteProduct(id) {
-    if (!window.confirm("Are you sure you want to permanently remove this product item record?")) return;
+    if (!id || !window.confirm("Are you sure you want to permanently remove this product item record?")) return;
     try {
       setError("");
       await api.delete(`/products/${id}`);
-      setProducts((prev) => prev.filter((p) => (p.id || p._id) !== id));
+      setProducts((prev) => prev.filter((p) => p && (p.id || p._id) !== id));
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to execute document deletion mapping requests");
     }
@@ -205,7 +224,7 @@ export default function AdminDashboard() {
       const formData = new FormData();
       formData.append("title", form.title.trim());
       formData.append("description", form.description.trim());
-      formData.append("price", String(Number(form.price)));
+      formData.append("price", String(Number(form.price || 0)));
       formData.append("category", form.category.trim());
       formData.append("stock", String(Number(form.stock || 0)));
       formData.append("code", (form.skuOrCode || "").trim());
@@ -219,7 +238,7 @@ export default function AdminDashboard() {
         const res = await api.put(`/products/${editingProductId}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        setProducts((prev) => prev.map((p) => ((p.id || p._id) === editingProductId ? res.data : p)));
+        setProducts((prev) => prev.map((p) => p && ((p.id || p._id) === editingProductId ? res.data : p)));
       } else {
         const res = await api.post("/products", formData, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -237,6 +256,7 @@ export default function AdminDashboard() {
   }
 
   async function handleToggleUserRole(userId, currentRole) {
+    if (!userId) return;
     const currentAdminId = user?.id || user?._id;
     if (userId === currentAdminId) {
       alert("Security warning: You cannot toggle your own administrative access permissions while logged into this session.");
@@ -250,11 +270,13 @@ export default function AdminDashboard() {
     try {
       setError("");
       const res = await api.patch(`/admin/users/${userId}/toggle-role`);
-      const updatedRole = res.data.role;
+      const updatedRole = res?.data?.role;
+
+      if (!updatedRole) throw new Error("Invalid server response shape");
 
       setUsersList((prevList) =>
         prevList.map((u) => 
-          u._id === userId || u.id === userId ? { ...u, role: updatedRole } : u
+          u && (u._id === userId || u.id === userId) ? { ...u, role: updatedRole } : u
         )
       );
     } catch (err) {
@@ -265,7 +287,7 @@ export default function AdminDashboard() {
   async function handleOnboardUser(e) {
     e.preventDefault();
     if (!onboardForm.name.trim() || !onboardForm.email.trim() || !onboardForm.password) {
-      setError("Please fill out name, email, and security credential fields completely.");
+      setError("Validation Error: Name, email address, and security credentials must be filled out completely.");
       return;
     }
 
@@ -273,13 +295,15 @@ export default function AdminDashboard() {
       setError("");
       setLoading(true);
       const payload = {
-        name: onboardForm.name,
-        email: onboardForm.email,
+        name: onboardForm.name.trim(),
+        email: onboardForm.email.trim().toLowerCase(),
         password: onboardForm.password,
-        role: onboardForm.role,
+        role: onboardForm.role || "user",
       };
 
-      const res = await api.post("/admin/users/onboard", payload);
+      const res = await api.post("/admin/users/onboard", payload, {
+        headers: { "Content-Type": "application/json" }
+      });
       const returnedUser = res.data?.user || res.data || {};
       
       const targetDate = returnedUser.createdAt || new Date().toISOString();
@@ -290,7 +314,7 @@ export default function AdminDashboard() {
         _id: returnedUser._id || returnedUser.id,
         id: returnedUser.id || returnedUser._id,
         joinDate: formattedJoinDate,
-        orders: []
+        orders: returnedUser.orders || []
       };
 
       setUsersList((prev) => [builtUser, ...prev]);
@@ -298,7 +322,8 @@ export default function AdminDashboard() {
       setShowOnboardForm(false);
       setActiveTab("Customers");
     } catch (err) {
-      setError(err?.response?.data?.message || "Could not write credentials to database container");
+      console.error("Onboarding API Exception Captured:", err);
+      setError(`API Registration Failure: ${err?.response?.data?.message || err?.response?.data?.error || "Network response handshake timeout."}`);
     } finally {
       setLoading(false);
     }
@@ -313,12 +338,12 @@ export default function AdminDashboard() {
   }
 
   return (
-    <section className="min-h-[calc(100vh-3rem)] py-6 bg-slate-50 dark:bg-[#0b0f19] transition-colors duration-200">
-      <div className="mx-auto w-full max-w-6xl px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <section className="min-h-screen pb-12 pt-[calc(1rem+env(safe-area-inset-top))] bg-slate-50 dark:bg-[#0b0f19] transition-colors duration-200 overflow-x-hidden">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 items-start">
           
           {/* SIDEBAR NAVIGATION AREA */}
-          <aside className="lg:col-span-3">
+          <aside className="w-full lg:col-span-3">
             <div className="bg-white border border-slate-200 rounded-[2rem] p-5 dark:border-white/10 dark:bg-white/5 shadow-xs">
               <div className="flex items-center gap-3">
                 <div className="h-11 w-11 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center dark:bg-white/5 dark:border-white/10">
@@ -330,7 +355,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <nav className="mt-6 space-y-1.5">
+              <nav className="mt-6 flex flex-row overflow-x-auto gap-2 pb-2 lg:pb-0 lg:flex-col lg:space-y-1.5 scrollbar-none">
                 {[
                   { label: "Overview" },
                   { label: "Products" },
@@ -342,7 +367,7 @@ export default function AdminDashboard() {
                     type="button"
                     onClick={() => { setActiveTab(item.label); setError(""); }}
                     className={classNames(
-                      "w-full rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-all duration-200",
+                      "whitespace-nowrap rounded-xl border px-4 py-2.5 lg:py-3 text-left text-sm font-semibold transition-all duration-200 shrink-0 lg:w-full",
                       activeTab === item.label
                         ? "border-purple-200 bg-purple-50 text-purple-700 shadow-xs dark:border-emerald-300/30 dark:bg-emerald-500/10 dark:text-emerald-100"
                         : "border-transparent bg-transparent text-slate-500 hover:bg-slate-50 hover:text-[#0f172a] dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white"
@@ -353,24 +378,23 @@ export default function AdminDashboard() {
                 ))}
               </nav>
 
-              <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 dark:border-white/5 dark:bg-white/5">
+              <div className="mt-4 lg:mt-6 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 dark:border-white/5 dark:bg-white/5">
                 <div className="text-xs font-semibold text-slate-400 dark:text-[#8d9ba8]">Session</div>
                 <div className="mt-1.5 text-sm font-medium text-[#1e293b] dark:text-slate-300">Admin</div>
-                <div className="text-xs text-slate-500 dark:text-[#8d9ba8] truncate mt-0.5">{user?.email || "vijaybabbar@yahoo.com"}</div>
+                <div className="text-xs text-slate-500 dark:text-[#8d9ba8] truncate mt-0.5">{user?.email || "admin@shopsphere.com"}</div>
               </div>
             </div>
           </aside>
 
           {/* MAIN MANAGEMENT AREA PANEL WORKSPACE */}
-          <main className="lg:col-span-9 space-y-6">
+          <main className="w-full lg:col-span-9 space-y-6">
             
             {error && (
-              <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700 text-sm font-semibold dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-200">
+              <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700 text-sm font-semibold dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-200 break-words">
                 {error}
               </div>
             )}
 
-            {/* TAB SECTION 1: OVERVIEW & CONFIGURATION */}
             {activeTab === "Overview" && (
               <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 dark:border-white/10 dark:bg-white/5 shadow-xs">
                 <div className="border-b border-slate-100 pb-4 mb-6 dark:border-white/5 flex items-center justify-between">
@@ -405,7 +429,7 @@ export default function AdminDashboard() {
                     <textarea className={classNames(inputClass, "h-24 resize-none")} value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} placeholder="Describe your product core value..." rows={3} required />
                   </Field>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
                     <Field label="Category Group"><input className={inputClass} value={form.category} onChange={(e) => setForm((p) => ({ ...p, category: e.target.value }))} placeholder="e.g. Accessories" required /></Field>
                     <Field label="Stock Inventory"><input className={inputClass} type="number" value={form.stock} onChange={(e) => setForm((p) => ({ ...p, stock: e.target.value }))} placeholder="e.g. 100" required /></Field>
                     <Field label="SKU / Tracking Code"><input className={inputClass} value={form.skuOrCode} onChange={(e) => setForm((p) => ({ ...p, skuOrCode: e.target.value }))} placeholder="e.g. LTHR-WL-01" /></Field>
@@ -440,20 +464,19 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* TAB SECTION 2: PRODUCTS PORTFOLIO */}
             {activeTab === "Products" && (
               <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 dark:border-white/10 dark:bg-white/5 shadow-xs space-y-6">
-                <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4 dark:border-white/5">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4 dark:border-white/5">
                   <div>
                     <h2 className="text-xl font-bold text-[#0f172a] dark:text-white">Master Inventory Catalog</h2>
                     <p className="text-xs text-slate-500 dark:text-[#8d9ba8] mt-0.5">Live monitoring dashboard showing all registered catalog items.</p>
                   </div>
-                  <div className="rounded-full border border-slate-200 bg-slate-50 px-4 py-1.5 text-xs font-bold text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
+                  <div className="self-start rounded-full border border-slate-200 bg-slate-50 px-4 py-1.5 text-xs font-bold text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
                     {products.length} Products Found
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                   {portfolioItems.length ? (
                     portfolioItems.map((it) => (
                       <div key={it.id} className="group relative rounded-2xl border border-slate-200 bg-white p-3 flex flex-col justify-between dark:border-white/10 dark:bg-white/5 transition duration-200 hover:shadow-md">
@@ -499,7 +522,6 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* TAB SECTION 3: ORDERS RENDERING */}
             {activeTab === "Orders" && (
               <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 dark:border-white/10 dark:bg-white/5 shadow-xs space-y-6">
                 <div className="border-b border-slate-100 pb-4 dark:border-white/5">
@@ -519,7 +541,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="w-full overflow-x-auto rounded-xl border border-slate-200 dark:border-white/5 scrollbar-thin">
-                  <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300 table-fixed">
+                  <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300 table-fixed min-w-[650px]">
                     <thead className="bg-slate-50 text-xs font-bold uppercase text-slate-500 dark:text-[#8d9ba8] dark:bg-white/5 border-b border-slate-200 dark:border-white/5">
                       <tr>
                         <th className="px-6 py-4 w-[160px]">Order Ref ID</th>
@@ -533,7 +555,6 @@ export default function AdminDashboard() {
                       {salesRecords.length ? (
                         salesRecords.map((sale) => (
                           <tr key={sale.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5">
-                            {/* ✅ UPDATED TOGGLE ID COLUMN */}
                             <td className="px-6 py-4 text-xs font-mono order-id-column" title={sale.id}>
                               <span className="mobile-short-id">
                                 {sale.id ? `${sale.id.substring(0, 6)}...` : ""}
@@ -572,15 +593,14 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* TAB SECTION 4: ACCOUNT DIRECTORY */}
             {activeTab === "Customers" && (
               <div className="bg-white border border-slate-200 rounded-[2rem] p-6 md:p-8 dark:border-white/10 dark:bg-white/5 shadow-xs space-y-6">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-4 dark:border-white/5">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 pb-4 dark:border-white/5">
                   <div>
                     <h2 className="text-lg font-bold text-[#0f172a] dark:text-white">Account Profile Index</h2>
                     <p className="text-xs text-slate-400 dark:text-[#8d9ba8] mt-0.5">Database index containing consumer records and administrative access keys.</p>
                   </div>
-                  <button type="button" onClick={() => setShowOnboardForm(!showOnboardForm)} className="rounded-xl border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-bold text-purple-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                  <button type="button" onClick={() => setShowOnboardForm(!showOnboardForm)} className="self-start rounded-xl border border-purple-200 bg-purple-50 px-3 py-1.5 text-xs font-bold text-purple-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
                     {showOnboardForm ? "View Directory Table" : "+ Provision Account"}
                   </button>
                 </div>
@@ -599,7 +619,7 @@ export default function AdminDashboard() {
                         <input className={inputClass} type="password" value={onboardForm.password} onChange={(e) => setOnboardForm(p => ({ ...p, password: e.target.value }))} placeholder="••••••••" required />
                       </Field>
                     </div>
-                    <div className="flex items-center justify-between pt-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2">
                       <Field label="Security clearance">
                         <select 
                           className={classNames(inputClass, "py-2.5")} 
@@ -614,7 +634,7 @@ export default function AdminDashboard() {
                           </option>
                         </select>
                       </Field>
-                      <button type="submit" className="h-11 self-end px-5 rounded-xl bg-purple-600 dark:bg-emerald-500 text-xs font-bold text-white dark:text-slate-950">
+                      <button type="submit" className="h-11 w-full sm:w-auto px-5 rounded-xl bg-purple-600 dark:bg-emerald-500 text-xs font-bold text-white dark:text-slate-950 self-end">
                         Commit Credentials
                       </button>
                     </div>
@@ -633,6 +653,7 @@ export default function AdminDashboard() {
                       <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                         {usersList.length ? (
                           usersList.map((usr) => {
+                            if (!usr) return null;
                             const actualRowId = usr._id || usr.id;
                             return (
                               <tr 

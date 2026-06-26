@@ -26,6 +26,7 @@ body {
     #f8fafc;
   color: #0f172a;
   transition: background 0.35s ease, color 0.35s ease;
+  -webkit-overflow-scrolling: touch; /* Ensures fluid navigation inertia on iOS/Android */
 }
 
 .dark body {
@@ -86,9 +87,18 @@ body {
   }
 }
 
+/* Hide scrollbars for clean responsive components but keep logic operational */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* ==========================================================================
    ADMIN DASHBOARD RESPONSIVE TOGGLE (DESKTOP VS ANDROID APK)
-   ========================================================================== */
+   ========================================================================= */
 
 /* Default Mobile Behavior (Android View) */
 .order-id-column .desktop-full-id {
