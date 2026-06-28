@@ -1,16 +1,12 @@
 buildscript {
-    
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        // Upgraded from 7.4.2 to 8.9.1 to resolve the checkDebugAarMetadata compilation errors
-        classpath 'com.android.tools.build:gradle:8.9.1'
+        // Safe toolchain version for Java 11 setups
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath 'com.google.gms:google-services:4.4.4'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
