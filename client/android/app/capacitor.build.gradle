@@ -1,13 +1,10 @@
 // Safe version fallback check inside the evaluation script itself
-import org.gradle.api.JavaVersion
-
+// Use JavaVersion without an explicit import to avoid resolution issues in some Gradle contexts
 def targetJavaVersion = JavaVersion.VERSION_11
 try {
-    // If the running Gradle toolchain supports VERSION_21, upgrade dynamically
-    if (JavaVersion.valueOf("VERSION_21")) {
-        targetJavaVersion = JavaVersion.VERSION_11
-    }
-} catch (IllegalArgumentException e) {
+    // If the running Gradle toolchain defines VERSION_21, use it; valueOf will throw if undefined
+    targetJavaVersion = JavaVersion.valueOf("VERSION_21")
+} catch (Exception e) {
     // Fallback quietly to Java 11 if VERSION_21 is undefined in this Gradle release
     targetJavaVersion = JavaVersion.VERSION_11
 }
