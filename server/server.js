@@ -18,16 +18,13 @@ const publicDir = path.join(__dirname, "public");
 const uploadsDir = path.join(__dirname, "server/public/uploads");
 const app = express();
 const PORT = process.env.PORT || 5000;
-const favicon = require('serve-favicon');
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(express.json());
 app.use(express.static(publicDir));
 app.use(express.static(uploadsDir));
 app.use(cors());
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico'))); // favicon.ico not found
 
 // Dynamic CORS safety layout for local network development + production deployment
 const allowedOrigins = (origin) => {
