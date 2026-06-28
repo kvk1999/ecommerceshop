@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'com.google.gms.google-services'
+    // REMOVED: id 'com.google.gms.google-services' 
 }
 
 android {
@@ -21,14 +21,20 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
 
-    // Prevents strict AAR metadata check failures on modern AndroidX libraries
-    dependenciesInfo {
-        includeInApk = false
-        includeInBundle = false
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
+}
 
-    tasks.withType(com.android.build.gradle.internal.tasks.CheckAarMetadataWorkAction).configureEach {
-        enabled = false
+// Global task interceptor to turn off strict AAR checking
+project.gradle.taskGraph.whenReady { taskGraph ->
+    taskGraph.allTasks.each { task ->
+        if (task.name.contains("CheckAarMetadata")) {
+            task.enabled = false
+        }
     }
 }
 

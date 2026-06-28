@@ -6,7 +6,7 @@ buildscript {
     dependencies {
         // Safe toolchain version for Java 11 setups
         classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath 'com.google.gms:google-services:4.4.4'
+        // REMOVED: classpath 'com.google.gms:google-services:4.4.4'
     }
 }
 
