@@ -2,21 +2,35 @@ include ':app'
 
 project(':app').projectDir = new File(settingsDir, 'app')
 
+// FORCE RE-LINK CAPACITOR CORE DIRECTORY INTO THE GRADLE BUILD SYSTEM TREE
+include ':capacitor-android'
+project(':capacitor-android').projectDir = new File(settingsDir, '../node_modules/@capacitor/android/capacitor')
+
 // =========================================================================
-// 1000% BUILD SUCCESSFUL GUARANTEE: DYNAMIC INTERCEPTOR FOR GRADLE 7.x
-// This intercepts Capacitor's build script during evaluation and hot-fixes 
-// the Java version error before the compiler can throw an exception.
+// BUILD SUCCESSFUL INTERCEPTORS
 // =========================================================================
 gradle.beforeProject { project ->
     if (project.name == 'app') {
+        // INTERCEPTOR 1: Fixes the Java 21 / Capacitor clash
         def capacitorBuildScript = new File(project.projectDir, 'capacitor.build.gradle')
         if (capacitorBuildScript.exists()) {
-            // Read the file content, swap the incompatible property out, and inject Java 11 compatibility
             def content = capacitorBuildScript.text
             if (content.contains("JavaVersion.VERSION_21")) {
                 content = content.replace("JavaVersion.VERSION_21", "JavaVersion.VERSION_11")
                 capacitorBuildScript.text = content
             }
         }
+
+        // INTERCEPTOR 2: Dynamic Resource Injector for Missing Theme Colors
+        def colorsFile = new File(project.projectDir, 'src/main/res/values/colors.xml')
+        colorsFile.parentFile.mkdirs()
+        colorsFile.text = """<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3880ff</color>
+    <color name="colorPrimaryDark">#cf3c4f</color>
+    <color name="colorAccent">#3cd070</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+</resources>"""
     }
 }

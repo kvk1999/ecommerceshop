@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace "com.shopsphere.app"
-    compileSdkVersion 34
+    compileSdkVersion 36
 
     defaultConfig {
         applicationId "com.shopsphere.app"
-        minSdkVersion 22
-        targetSdkVersion 34
+        minSdkVersion 24
+        targetSdkVersion 36
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -40,10 +40,13 @@ project.gradle.taskGraph.whenReady { taskGraph ->
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    
+    // Explicitly add the Capacitor Android library dependency
+    implementation project(':capacitor-android')
+
+    // Your existing android design framework elements down below...
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
-    
-    // Core Layout Engines
     implementation 'androidx.core:core-ktx:1.17.0'
     implementation 'androidx.core:core-splashscreen:1.2.0'
     implementation 'androidx.activity:activity:1.11.0'
